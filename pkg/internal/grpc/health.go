@@ -1,0 +1,27 @@
+package grpc
+
+import (
+	"context"
+	"time"
+
+	health "google.golang.org/grpc/health/grpc_health_v1"
+)
+
+func (v *GrpcServer) Check(ctx context.Context, request *health.HealthCheckRequest) (*health.HealthCheckResponse, error) {
+	return &health.HealthCheckResponse{
+		Status: health.HealthCheckResponse_SERVING,
+	}, nil
+}
+
+func (v *GrpcServer) Watch(request *health.HealthCheckRequest, server health.Health_WatchServer) error {
+	for {
+		if server.Send(&health.HealthCheckResponse{
+			Status: health.HealthCheckResponse_SERVING,
+		}) != nil {
+			break
+		}
+		time.Sleep(1000 * time.Millisecond)
+	}
+
+	return nil
+}

@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+option go_package = ".;proto";
+
+package proto;
+
+service ServiceDirectory {
+  rpc GetService(GetServiceRequest) returns (GetServiceResponse) {}
+  rpc ListService(ListServiceRequest) returns (ListServiceResponse) {}
+  rpc AddService(ServiceInfo) returns (AddServiceResponse) {}
+  rpc RemoveService(RemoveServiceRequest) returns (RemoveServiceResponse) {}
+}
+
+message ServiceInfo {
+  string id = 1;
+  string type = 2;
+  string label = 3;
+  string grpc_addr = 4;
+  optional string http_addr = 5;
+}
+
+message GetServiceRequest {
+  optional string id = 1;
+  optional string type = 2;
+}
+
+message GetServiceResponse {
+  ServiceInfo data = 1;
+}
+
+message ListServiceRequest {
+  optional string type = 1;
+}
+
+message ListServiceResponse {
+  repeated ServiceInfo data = 1;
+}
+
+message AddServiceResponse {
+  bool is_success = 1;
+}
+
+message RemoveServiceRequest {
+  string id =1;
+}
+
+message RemoveServiceResponse {
+  bool is_success = 1;
+}
+
