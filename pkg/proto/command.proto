@@ -37,6 +37,7 @@ message CommandArgument {
 }
 
 message CommandReturn {
-  int32 status = 1;
-  optional bytes payload = 2;
+  bool is_delivered = 1;
+  int32 status = 2;
+  optional bytes payload = 3;
 }

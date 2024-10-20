@@ -76,7 +76,7 @@ func (v *ServiceRpcServer) AddService(ctx context.Context, info *proto.ServiceIn
 		HttpAddr: info.HttpAddr,
 	}
 	AddServiceInstance(in)
-	log.Info().Str("id", clientId).Str("label", info.GetLabel()).Msg("New service added.")
+	log.Info().Str("id", clientId).Str("label", info.GetLabel()).Msg("New service registered")
 	return &proto.AddServiceResponse{
 		IsSuccess: true,
 	}, nil

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"github.com/fatih/color"
 	"os"
 	"os/signal"
 	"syscall"
@@ -21,6 +23,16 @@ func init() {
 }
 
 func main() {
+	// Booting screen
+	fmt.Println(color.YellowString(` _   _
+| \ | | _____  ___   _ ___
+|  \| |/ _ \ \/ / | | / __|
+| |\  |  __/>  <| |_| \__ \
+|_| \_|\___/_/\_\\__,_|___/`))
+	fmt.Printf("%s v%s\n", color.New(color.FgHiYellow).Add(color.Bold).Sprintf("Hypernet.Nexus"), pkg.AppVersion)
+	fmt.Printf("The core component of Hypernet (Solar Network)\n")
+	color.HiBlack("=====================================================\n")
+
 	// Configure settings
 	viper.AddConfigPath(".")
 	viper.AddConfigPath("..")
@@ -43,13 +55,9 @@ func main() {
 	quartz.Start()
 
 	// Messages
-	log.Info().Msgf("Nexus v%s is started...", pkg.AppVersion)
-
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-
-	log.Info().Msgf("Passport v%s is quitting...", pkg.AppVersion)
 
 	quartz.Stop()
 }

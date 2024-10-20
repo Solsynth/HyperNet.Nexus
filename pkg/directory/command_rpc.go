@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"io"
+	"net/http"
 	"time"
 )
 
@@ -20,7 +21,7 @@ func (c CommandRpcServer) AddCommand(ctx context.Context, info *proto.CommandInf
 		return nil, err
 	}
 
-	service := GetServiceInstanceByType(clientId)
+	service := GetServiceInstance(clientId)
 	if service == nil {
 		return nil, status.Errorf(codes.NotFound, "service not found")
 	}
@@ -44,18 +45,35 @@ func (c CommandRpcServer) SendCommand(ctx context.Context, argument *proto.Comma
 
 	handler := GetCommandHandler(id, method)
 	if handler == nil {
-		return nil, status.Errorf(codes.NotFound, "command not found")
+		return &proto.CommandReturn{
+			IsDelivered: false,
+			Status:      http.StatusNotFound,
+			Payload:     []byte("command not found"),
+		}, nil
 	}
 
 	conn, err := handler.GetGrpcConn()
 	if err != nil {
-		return nil, status.Errorf(codes.Unavailable, "service unavailable")
+		return &proto.CommandReturn{
+			IsDelivered: false,
+			Status:      http.StatusServiceUnavailable,
+			Payload:     []byte("service unavailable"),
+		}, nil
 	}
 
-	contx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
 
-	return proto.NewCommandControllerClient(conn).SendCommand(contx, argument)
+	out, err := proto.NewCommandControllerClient(conn).SendCommand(ctx, argument)
+	if err != nil {
+		return &proto.CommandReturn{
+			IsDelivered: true,
+			Status:      http.StatusInternalServerError,
+			Payload:     []byte(err.Error()),
+		}, nil
+	}
+	out.IsDelivered = true
+	return out, nil
 }
 
 func (c CommandRpcServer) SendStreamCommand(g grpc.BidiStreamingServer[proto.CommandArgument, proto.CommandReturn]) error {
@@ -77,13 +95,21 @@ func (c CommandRpcServer) SendStreamCommand(g grpc.BidiStreamingServer[proto.Com
 
 		conn, err := handler.GetGrpcConn()
 
-		contx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-		result, _ := proto.NewCommandControllerClient(conn).SendCommand(contx, pck)
+		ctx, cancel := context.WithTimeout(g.Context(), time.Second*10)
+		result, err := proto.NewCommandControllerClient(conn).SendCommand(ctx, pck)
 		cancel()
 
-		_ = g.Send(&proto.CommandReturn{
-			Status:  result.Status,
-			Payload: result.Payload,
-		})
+		if err != nil {
+			_ = g.Send(&proto.CommandReturn{
+				IsDelivered: false,
+				Status:      http.StatusInternalServerError,
+				Payload:     []byte(err.Error()),
+			})
+		} else {
+			_ = g.Send(&proto.CommandReturn{
+				Status:  result.Status,
+				Payload: result.Payload,
+			})
+		}
 	}
 }

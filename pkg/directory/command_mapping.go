@@ -1,7 +1,10 @@
 package directory
 
 import (
+	"git.solsynth.dev/hypernet/nexus/pkg/nex"
+	"github.com/rs/zerolog/log"
 	"github.com/samber/lo"
+	"strings"
 	"sync"
 )
 
@@ -9,17 +12,17 @@ import (
 var commandDirectory = make(map[string]*Command)
 var commandDirectoryMutex sync.Mutex
 
-func GetCommandKey(id, method string) string {
-	return id + ":" + method
-}
-
 func AddCommand(id, method string, tags []string, handler *ServiceInstance) {
 	commandDirectoryMutex.Lock()
 	defer commandDirectoryMutex.Unlock()
 
-	ky := GetCommandKey(id, method)
-	if _, ok := commandDirectory[id]; !ok {
-		commandDirectory[id] = &Command{
+	if tags == nil {
+		tags = make([]string, 0)
+	}
+
+	ky := nex.GetCommandKey(id, method)
+	if _, ok := commandDirectory[ky]; !ok {
+		commandDirectory[ky] = &Command{
 			ID:      id,
 			Method:  method,
 			Tags:    tags,
@@ -33,13 +36,15 @@ func AddCommand(id, method string, tags []string, handler *ServiceInstance) {
 	commandDirectory[ky].Handler = lo.UniqBy(commandDirectory[ky].Handler, func(item *ServiceInstance) string {
 		return item.ID
 	})
+
+	log.Info().Str("id", id).Str("method", method).Str("tags", strings.Join(tags, ",")).Msg("New command registered")
 }
 
 func GetCommandHandler(id, method string) *ServiceInstance {
 	commandDirectoryMutex.Lock()
 	defer commandDirectoryMutex.Unlock()
 
-	ky := GetCommandKey(id, method)
+	ky := nex.GetCommandKey(id, method)
 	if val, ok := commandDirectory[ky]; ok {
 		if len(val.Handler) == 0 {
 			return nil
@@ -57,6 +62,6 @@ func RemoveCommand(id, method string) {
 	commandDirectoryMutex.Lock()
 	defer commandDirectoryMutex.Unlock()
 
-	ky := GetCommandKey(id, method)
+	ky := nex.GetCommandKey(id, method)
 	delete(commandDirectory, ky)
 }

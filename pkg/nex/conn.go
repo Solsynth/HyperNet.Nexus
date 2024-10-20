@@ -2,6 +2,7 @@ package nex
 
 import (
 	"context"
+	"google.golang.org/grpc/metadata"
 	"time"
 
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
@@ -12,15 +13,18 @@ import (
 	_ "github.com/mbobakov/grpc-consul-resolver"
 )
 
-type HyperConn struct {
+type Conn struct {
 	Addr string
 	Info *proto.ServiceInfo
 
-	dealerConn    *grpc.ClientConn
-	cacheGrpcConn map[string]*grpc.ClientConn
+	commandServer   *grpc.Server
+	commandHandlers map[string]CommandHandler
+
+	nexusConn  *grpc.ClientConn
+	clientConn map[string]*grpc.ClientConn
 }
 
-func NewHyperConn(addr string, info *proto.ServiceInfo) (*HyperConn, error) {
+func NewNexusConn(addr string, info *proto.ServiceInfo) (*Conn, error) {
 	conn, err := grpc.NewClient(
 		addr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -29,22 +33,26 @@ func NewHyperConn(addr string, info *proto.ServiceInfo) (*HyperConn, error) {
 		return nil, err
 	}
 
-	return &HyperConn{
+	return &Conn{
 		Addr: addr,
 		Info: info,
 
-		dealerConn:    conn,
-		cacheGrpcConn: make(map[string]*grpc.ClientConn),
+		commandHandlers: make(map[string]CommandHandler),
+
+		nexusConn:  conn,
+		clientConn: make(map[string]*grpc.ClientConn),
 	}, nil
 }
 
-func (v *HyperConn) RegisterService() error {
-	dir := proto.NewServiceDirectoryClient(v.dealerConn)
-	_, err := dir.AddService(context.Background(), v.Info)
+func (v *Conn) RegisterService() error {
+	dir := proto.NewServiceDirectoryClient(v.nexusConn)
+	ctx := context.Background()
+	ctx = metadata.AppendToOutgoingContext(ctx, "client_id", v.Info.Id)
+	_, err := dir.AddService(ctx, v.Info)
 	return err
 }
 
-func (v *HyperConn) KeepRegisterService() error {
+func (v *Conn) RunRegistering() error {
 	err := v.RegisterService()
 	if err != nil {
 		return err
@@ -52,9 +60,9 @@ func (v *HyperConn) KeepRegisterService() error {
 
 	for {
 		time.Sleep(5 * time.Second)
-		client := health.NewHealthClient(v.dealerConn)
+		client := health.NewHealthClient(v.nexusConn)
 		if _, err := client.Check(context.Background(), &health.HealthCheckRequest{}); err != nil {
-			if v.KeepRegisterService() == nil {
+			if v.RunRegistering() == nil {
 				break
 			}
 		}
@@ -63,12 +71,12 @@ func (v *HyperConn) KeepRegisterService() error {
 	return nil
 }
 
-func (v *HyperConn) GetNexusGrpcConn() *grpc.ClientConn {
-	return v.dealerConn
+func (v *Conn) GetNexusGrpcConn() *grpc.ClientConn {
+	return v.nexusConn
 }
 
-func (v *HyperConn) GetServiceGrpcConn(t string) (*grpc.ClientConn, error) {
-	if val, ok := v.cacheGrpcConn[t]; ok {
+func (v *Conn) GetClientGrpcConn(t string) (*grpc.ClientConn, error) {
+	if val, ok := v.clientConn[t]; ok {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 		defer cancel()
 		if _, err := health.NewHealthClient(val).Check(ctx, &health.HealthCheckRequest{
@@ -76,14 +84,14 @@ func (v *HyperConn) GetServiceGrpcConn(t string) (*grpc.ClientConn, error) {
 		}); err == nil {
 			return val, nil
 		} else {
-			delete(v.cacheGrpcConn, t)
+			delete(v.clientConn, t)
 		}
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
-	out, err := proto.NewServiceDirectoryClient(v.dealerConn).GetService(ctx, &proto.GetServiceRequest{
+	out, err := proto.NewServiceDirectoryClient(v.nexusConn).GetService(ctx, &proto.GetServiceRequest{
 		Type: &t,
 	})
 	if err != nil {
@@ -95,7 +103,7 @@ func (v *HyperConn) GetServiceGrpcConn(t string) (*grpc.ClientConn, error) {
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err == nil {
-		v.cacheGrpcConn[t] = conn
+		v.clientConn[t] = conn
 	}
 	return conn, err
 }
