@@ -25,7 +25,8 @@ func NewServer() *GrpcServer {
 		srv: grpc.NewServer(),
 	}
 
-	proto.RegisterServiceDirectoryServer(server.srv, &directory.DirectoryRpcServer{})
+	proto.RegisterServiceDirectoryServer(server.srv, &directory.ServiceRpcServer{})
+	proto.RegisterCommandControllerServer(server.srv, &directory.CommandRpcServer{})
 	proto.RegisterStreamControllerServer(server.srv, server)
 	health.RegisterHealthServer(server.srv, server)
 

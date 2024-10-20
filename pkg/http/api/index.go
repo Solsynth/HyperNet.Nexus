@@ -6,6 +6,7 @@ import (
 )
 
 func MapAPIs(app *fiber.App) {
+	// Some built-in public-accessible APIs
 	wellKnown := app.Group("/.well-known").Name("Well Known")
 	{
 		wellKnown.Get("/", func(c *fiber.Ctx) error {
@@ -15,19 +16,13 @@ func MapAPIs(app *fiber.App) {
 		wellKnown.Get("/directory/services", listExistsService)
 	}
 
+	// Common websocket gateway
+	app.Use(func(c *fiber.Ctx) error {
+		/*if err := exts.EnsureAuthenticated(c); err != nil {
+			return err
+		}*/
+		return c.Next()
+	}).Get("/ws", websocket.New(listenWebsocket))
+
 	app.All("/cgi/:service/*", forwardServiceRequest)
-
-	api := app.Group("/api").Name("API")
-	{
-		api.Use(func(c *fiber.Ctx) error {
-			/*if err := exts.EnsureAuthenticated(c); err != nil {
-				return err
-			}*/
-			return c.Next()
-		}).Get("/ws", websocket.New(listenWebsocket))
-
-		api.All("/*", func(c *fiber.Ctx) error {
-			return fiber.ErrNotFound
-		})
-	}
 }

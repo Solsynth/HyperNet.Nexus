@@ -5,8 +5,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"git.solsynth.dev/hypernet/nexus/pkg/internal/services"
-
 	server "git.solsynth.dev/hypernet/nexus/pkg/http"
 	pkg "git.solsynth.dev/hypernet/nexus/pkg/internal"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/grpc"
@@ -32,14 +30,6 @@ func main() {
 	// Load settings
 	if err := viper.ReadInConfig(); err != nil {
 		log.Panic().Err(err).Msg("An error occurred when loading settings.")
-	}
-
-	// Set up external services
-	if err := services.SetupFirebase(); err != nil {
-		log.Warn().Err(err).Msg("An error occurred when setup firebase, firebase notification push is unavailable...")
-	}
-	if err := services.SetupAPNS(); err != nil {
-		log.Warn().Err(err).Msg("An error occurred when setup APNs, apple notification push is unavailable...")
 	}
 
 	// Server

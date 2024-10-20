@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+option go_package = ".;proto";
+
+package proto;
+
+service CommandController {
+  rpc AddCommand(CommandInfo) returns (AddCommandResponse) {}
+  rpc RemoveCommand(CommandLookupRequest) returns (RemoveCommandResponse) {}
+  rpc SendCommand(CommandArgument) returns (CommandReturn) {}
+  rpc SendStreamCommand(stream CommandArgument) returns (stream CommandReturn) {}
+}
+
+message CommandInfo {
+  string id = 1;
+  string method = 2;
+  repeated string tags = 3;
+}
+
+message CommandLookupRequest {
+  string id = 1;
+  string method = 2;
+}
+
+message AddCommandResponse {
+  bool is_success = 1;
+}
+
+message RemoveCommandResponse {
+  bool is_success = 1;
+}
+
+message CommandArgument {
+  string command = 1;
+  string method = 2;
+  optional bytes payload = 3;
+}
+
+message CommandReturn {
+  int32 status = 1;
+  optional bytes payload = 2;
+}

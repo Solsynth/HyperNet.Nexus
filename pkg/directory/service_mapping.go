@@ -4,6 +4,7 @@ import (
 	"sync"
 )
 
+// In services, we use sync.Map because it will be both often read and write
 var serviceDirectory sync.Map
 
 func GetServiceInstance(id string) *ServiceInstance {
