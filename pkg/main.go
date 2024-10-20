@@ -3,12 +3,12 @@ package main
 import (
 	"fmt"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/database"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/http"
 	"github.com/fatih/color"
 	"os"
 	"os/signal"
 	"syscall"
 
-	server "git.solsynth.dev/hypernet/nexus/pkg/http"
 	pkg "git.solsynth.dev/hypernet/nexus/pkg/internal"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/grpc"
 	"github.com/robfig/cron/v3"

@@ -1,7 +1,11 @@
 package directory
 
 import (
+	"context"
+	"git.solsynth.dev/hypernet/nexus/pkg/nex"
+	"git.solsynth.dev/hypernet/nexus/pkg/proto"
 	"sync"
+	"time"
 )
 
 // In services, we use sync.Map because it will be both often read and write
@@ -54,4 +58,21 @@ func AddServiceInstance(in *ServiceInstance) {
 
 func RemoveServiceInstance(id string) {
 	serviceDirectory.Delete(id)
+}
+
+func BroadcastEvent(event string, data any) {
+	serviceDirectory.Range(func(key, value any) bool {
+		conn, err := value.(*ServiceInstance).GetGrpcConn()
+		if err != nil {
+			return true
+		}
+
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		_, _ = proto.NewServiceDirectoryClient(conn).BroadcastEvent(ctx, &proto.EventInfo{
+			Event: event,
+			Data:  nex.EncodeMap(data),
+		})
+		return true
+	})
 }

@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
 	"math/rand"
 	"sync"
 
@@ -22,6 +23,11 @@ func ClientRegister(user models.Account, conn *websocket.Conn) uint64 {
 	wsConn[user.ID][clientId] = conn
 	wsMutex.Unlock()
 
+	directory.BroadcastEvent("ws.client.register", map[string]any{
+		"user": user.ID,
+		"id":   clientId,
+	})
+
 	return clientId
 }
 
@@ -32,6 +38,11 @@ func ClientUnregister(user models.Account, id uint64) {
 	}
 	delete(wsConn[user.ID], id)
 	wsMutex.Unlock()
+
+	directory.BroadcastEvent("ws.client.unregister", map[string]any{
+		"user": user.ID,
+		"id":   id,
+	})
 }
 
 func ClientCount(uid uint) int {

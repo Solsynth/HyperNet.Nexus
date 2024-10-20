@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 	"fmt"
-	"git.solsynth.dev/hypernet/nexus/pkg/http/ws"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/http/ws"
 
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
 	"github.com/samber/lo"

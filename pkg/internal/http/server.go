@@ -1,7 +1,7 @@
 package server
 
 import (
-	"git.solsynth.dev/hypernet/nexus/pkg/http/api"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/http/api"
 	"github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"

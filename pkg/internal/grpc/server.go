@@ -1,9 +1,9 @@
 package grpc
 
 import (
+	directory2 "git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
 	"net"
 
-	"git.solsynth.dev/hypernet/nexus/pkg/directory"
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
 
 	"google.golang.org/grpc/reflection"
@@ -27,8 +27,8 @@ func NewServer() *Server {
 		srv: grpc.NewServer(),
 	}
 
-	proto.RegisterServiceDirectoryServer(server.srv, &directory.ServiceRpcServer{})
-	proto.RegisterCommandControllerServer(server.srv, &directory.CommandRpcServer{})
+	proto.RegisterServiceDirectoryServer(server.srv, &directory2.ServiceRpcServer{})
+	proto.RegisterCommandControllerServer(server.srv, &directory2.CommandRpcServer{})
 	proto.RegisterDatabaseControllerServer(server.srv, server)
 	proto.RegisterStreamControllerServer(server.srv, server)
 	health.RegisterHealthServer(server.srv, server)

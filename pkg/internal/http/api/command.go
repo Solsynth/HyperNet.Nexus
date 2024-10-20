@@ -3,7 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
-	"git.solsynth.dev/hypernet/nexus/pkg/directory"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"

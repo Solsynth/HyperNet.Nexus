@@ -9,6 +9,7 @@ service ServiceDirectory {
   rpc ListService(ListServiceRequest) returns (ListServiceResponse) {}
   rpc AddService(ServiceInfo) returns (AddServiceResponse) {}
   rpc RemoveService(RemoveServiceRequest) returns (RemoveServiceResponse) {}
+  rpc BroadcastEvent(EventInfo) returns (EventResponse) {}
 }
 
 message ServiceInfo {
@@ -41,10 +42,17 @@ message AddServiceResponse {
 }
 
 message RemoveServiceRequest {
-  string id =1;
+  string id = 1;
 }
 
 message RemoveServiceResponse {
   bool is_success = 1;
 }
 
+message EventInfo {
+  string event = 1;
+  bytes data = 2;
+}
+
+message EventResponse {
+}

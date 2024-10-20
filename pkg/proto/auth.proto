@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+option go_package = ".;proto";
+
+package proto;
+
+service Auth {
+  rpc Authenticate(AuthRequest) returns (AuthReply) {}
+  rpc EnsurePermGranted(CheckPermRequest) returns (CheckPermResponse) {}
+  rpc EnsureUserPermGranted(CheckUserPermRequest) returns (CheckUserPermResponse) {}
+  rpc ListUserRelative(ListUserRelativeRequest) returns (ListUserRelativeResponse) {}
+}
+
+message UserInfo {
+  uint64 id = 1;
+  string name = 2;
+  optional bytes metadata = 3;
+}
+
+message AuthInfo {
+  UserInfo info = 1;
+  bytes perm_nodes = 2;
+  uint64 session_id = 3;
+  optional string new_access_token = 4;
+  optional string new_refresh_token = 5;
+}
+
+message AuthRequest {
+  string access_token = 1;
+  optional string refresh_token = 2;
+}
+
+message AuthReply {
+  bool is_valid = 1;
+  optional AuthInfo info = 2;
+}
+
+message CheckPermRequest {
+  string token = 1;
+  string key = 2;
+  bytes value = 3;
+}
+
+message CheckPermResponse {
+  bool is_valid = 1;
+}
+
+message CheckUserPermRequest {
+  uint64 user_id = 1;
+  uint64 other_id = 2;
+  string key = 3;
+  bytes value = 4;
+}
+
+message CheckUserPermResponse {
+  bool is_valid = 1;
+}
+
+message ListUserRelativeRequest {
+  uint64 user_id = 1;
+  int32 status = 2;
+  bool is_related = 3;
+}
+
+message ListUserRelativeResponse {
+  repeated UserInfo data = 1;
+}

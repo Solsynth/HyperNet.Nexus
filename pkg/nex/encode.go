@@ -2,8 +2,8 @@ package nex
 
 import jsoniter "github.com/json-iterator/go"
 
-func EncodeMap(policy map[string]any) []byte {
-	raw, _ := jsoniter.Marshal(policy)
+func EncodeMap(data any) []byte {
+	raw, _ := jsoniter.Marshal(data)
 	return raw
 }
 

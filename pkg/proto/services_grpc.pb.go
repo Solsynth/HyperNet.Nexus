@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ServiceDirectory_GetService_FullMethodName    = "/proto.ServiceDirectory/GetService"
-	ServiceDirectory_ListService_FullMethodName   = "/proto.ServiceDirectory/ListService"
-	ServiceDirectory_AddService_FullMethodName    = "/proto.ServiceDirectory/AddService"
-	ServiceDirectory_RemoveService_FullMethodName = "/proto.ServiceDirectory/RemoveService"
+	ServiceDirectory_GetService_FullMethodName     = "/proto.ServiceDirectory/GetService"
+	ServiceDirectory_ListService_FullMethodName    = "/proto.ServiceDirectory/ListService"
+	ServiceDirectory_AddService_FullMethodName     = "/proto.ServiceDirectory/AddService"
+	ServiceDirectory_RemoveService_FullMethodName  = "/proto.ServiceDirectory/RemoveService"
+	ServiceDirectory_BroadcastEvent_FullMethodName = "/proto.ServiceDirectory/BroadcastEvent"
 )
 
 // ServiceDirectoryClient is the client API for ServiceDirectory service.
@@ -33,6 +34,7 @@ type ServiceDirectoryClient interface {
 	ListService(ctx context.Context, in *ListServiceRequest, opts ...grpc.CallOption) (*ListServiceResponse, error)
 	AddService(ctx context.Context, in *ServiceInfo, opts ...grpc.CallOption) (*AddServiceResponse, error)
 	RemoveService(ctx context.Context, in *RemoveServiceRequest, opts ...grpc.CallOption) (*RemoveServiceResponse, error)
+	BroadcastEvent(ctx context.Context, in *EventInfo, opts ...grpc.CallOption) (*EventResponse, error)
 }
 
 type serviceDirectoryClient struct {
@@ -83,6 +85,16 @@ func (c *serviceDirectoryClient) RemoveService(ctx context.Context, in *RemoveSe
 	return out, nil
 }
 
+func (c *serviceDirectoryClient) BroadcastEvent(ctx context.Context, in *EventInfo, opts ...grpc.CallOption) (*EventResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EventResponse)
+	err := c.cc.Invoke(ctx, ServiceDirectory_BroadcastEvent_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ServiceDirectoryServer is the server API for ServiceDirectory service.
 // All implementations must embed UnimplementedServiceDirectoryServer
 // for forward compatibility.
@@ -91,6 +103,7 @@ type ServiceDirectoryServer interface {
 	ListService(context.Context, *ListServiceRequest) (*ListServiceResponse, error)
 	AddService(context.Context, *ServiceInfo) (*AddServiceResponse, error)
 	RemoveService(context.Context, *RemoveServiceRequest) (*RemoveServiceResponse, error)
+	BroadcastEvent(context.Context, *EventInfo) (*EventResponse, error)
 	mustEmbedUnimplementedServiceDirectoryServer()
 }
 
@@ -112,6 +125,9 @@ func (UnimplementedServiceDirectoryServer) AddService(context.Context, *ServiceI
 }
 func (UnimplementedServiceDirectoryServer) RemoveService(context.Context, *RemoveServiceRequest) (*RemoveServiceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveService not implemented")
+}
+func (UnimplementedServiceDirectoryServer) BroadcastEvent(context.Context, *EventInfo) (*EventResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BroadcastEvent not implemented")
 }
 func (UnimplementedServiceDirectoryServer) mustEmbedUnimplementedServiceDirectoryServer() {}
 func (UnimplementedServiceDirectoryServer) testEmbeddedByValue()                          {}
@@ -206,6 +222,24 @@ func _ServiceDirectory_RemoveService_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ServiceDirectory_BroadcastEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EventInfo)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServiceDirectoryServer).BroadcastEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ServiceDirectory_BroadcastEvent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServiceDirectoryServer).BroadcastEvent(ctx, req.(*EventInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ServiceDirectory_ServiceDesc is the grpc.ServiceDesc for ServiceDirectory service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +262,10 @@ var ServiceDirectory_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveService",
 			Handler:    _ServiceDirectory_RemoveService_Handler,
+		},
+		{
+			MethodName: "BroadcastEvent",
+			Handler:    _ServiceDirectory_BroadcastEvent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
