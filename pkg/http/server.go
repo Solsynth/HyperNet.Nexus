@@ -19,8 +19,8 @@ func NewServer() *HTTPApp {
 	app := fiber.New(fiber.Config{
 		DisableStartupMessage: true,
 		EnableIPValidation:    true,
-		ServerHeader:          "Hydrogen.Nexus",
-		AppName:               "Hydrogen.Nexus",
+		ServerHeader:          "Hypernet.Nexus",
+		AppName:               "Hypernet.Nexus",
 		ProxyHeader:           fiber.HeaderXForwardedFor,
 		JSONEncoder:           json.Marshal,
 		JSONDecoder:           json.Unmarshal,

@@ -11,7 +11,7 @@ import (
 
 type Test struct {
 	cruda.BaseModel
-	Content string `json:"content"`
+	Content string `json:"content" validate:"required"`
 }
 
 func TestCrudaCommand(t *testing.T) {

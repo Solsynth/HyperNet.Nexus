@@ -1,7 +1,9 @@
 package nex
 
 import (
+	"fmt"
 	"github.com/goccy/go-json"
+	"net/http"
 	"sync"
 )
 
@@ -13,6 +15,28 @@ type CommandCtx struct {
 	statusCode  int
 
 	values sync.Map
+}
+
+func CtxValueMustBe[T any](c *CommandCtx, key string) (T, error) {
+	if val, ok := c.values.Load(key); ok {
+		if v, ok := val.(T); ok {
+			return v, nil
+		}
+	}
+	var out T
+	if err := c.Write([]byte(fmt.Sprintf("value %s not found in type %T", key, out)), "text/plain+error", http.StatusBadRequest); err != nil {
+		return out, err
+	}
+	return out, fmt.Errorf("value %s not found", key)
+}
+
+func CtxValueShouldBe[T any](c *CommandCtx, key string, defaultValue T) T {
+	if val, ok := c.values.Load(key); ok {
+		if v, ok := val.(T); ok {
+			return v
+		}
+	}
+	return defaultValue
 }
 
 func (c *CommandCtx) Values() map[string]any {
