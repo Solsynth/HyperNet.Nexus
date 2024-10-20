@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/reflection"
 	"net"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -70,7 +71,36 @@ func (v localCommandRpcServer) SendCommand(ctx context.Context, argument *proto.
 		}
 		if md, ok := metadata.FromIncomingContext(ctx); ok {
 			for k, v := range md {
-				cc.values.Store(k, v)
+				var val any = nil
+				if len(v) == 1 {
+					if len(v[0]) != 0 {
+						if i, err := strconv.ParseInt(v[0], 10, 64); err == nil {
+							val = i
+						} else if b, err := strconv.ParseBool(v[0]); err == nil {
+							val = b
+						} else if f, err := strconv.ParseFloat(v[0], 64); err == nil {
+							val = f
+						}
+						layouts := []string{
+							time.RFC3339,
+							"2006-01-02 15:04:05", // Example: 2024-10-20 14:55:05
+							"2006-01-02",          // Example: 2024-10-20
+						}
+						for _, layout := range layouts {
+							if t, err := time.Parse(layout, v[0]); err == nil {
+								val = t
+							}
+						}
+						if val == nil {
+							val = v[0]
+						}
+					} else {
+						val = v[0]
+					}
+				} else if len(v) > 1 {
+					val = v
+				}
+				cc.values.Store(k, val)
 			}
 		}
 		if err := handler(cc); err != nil {
