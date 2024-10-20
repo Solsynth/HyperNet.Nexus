@@ -24,5 +24,5 @@ func MapAPIs(app *fiber.App) {
 		return c.Next()
 	}).Get("/ws", websocket.New(listenWebsocket))
 
-	app.All("/cgi/:service/*", forwardServiceRequest)
+	app.All("/cgi/:command", invokeCommand)
 }

@@ -25,7 +25,15 @@ func TestHandleCommand(t *testing.T) {
 		t.Fatal(fmt.Errorf("unable to register service: %v", err))
 	}
 
-	err = conn.AddCommand("echo", "get", nil, func(ctx *nex.CommandCtx) error {
+	err = conn.AddCommand("say.hi", "all", nil, func(ctx *nex.CommandCtx) error {
+		return ctx.Write([]byte("Hello, World!"), http.StatusOK)
+	})
+	if err != nil {
+		t.Fatal(fmt.Errorf("unable to add command: %v", err))
+		return
+	}
+	err = conn.AddCommand("echo", "all", nil, func(ctx *nex.CommandCtx) error {
+		t.Log("Received command: ", string(ctx.Read()))
 		return ctx.Write(ctx.Read(), http.StatusOK)
 	})
 	if err != nil {
@@ -34,13 +42,13 @@ func TestHandleCommand(t *testing.T) {
 	}
 
 	go func() {
-		err := conn.RunCommands("127.0.0.1:6001")
+		err := conn.RunCommands("0.0.0.0:6001")
 		if err != nil {
 			t.Error(fmt.Errorf("unable to run commands: %v", err))
 			return
 		}
 	}()
 
-	t.Log("Waiting 10 seconds for calling command...")
-	time.Sleep(time.Second * 10)
+	t.Log("Waiting 60 seconds for calling command...")
+	time.Sleep(time.Second * 60)
 }

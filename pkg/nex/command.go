@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/reflection"
 	"net"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -19,20 +20,33 @@ func GetCommandKey(id, method string) string {
 }
 
 func (v *Conn) AddCommand(id, method string, tags []string, fn CommandHandler) error {
+	method = strings.ToLower(method)
 	dir := proto.NewCommandControllerClient(v.nexusConn)
 	ctx := context.Background()
 	ctx = metadata.AppendToOutgoingContext(ctx, "client_id", v.Info.Id)
-	_, err := dir.AddCommand(ctx, &proto.CommandInfo{
-		Id:     id,
-		Method: method,
-		Tags:   tags,
-	})
 
-	if err == nil {
-		v.commandHandlers[GetCommandKey(id, method)] = fn
+	var addingMethodQueue []string
+	if method == "all" {
+		addingMethodQueue = []string{"get", "post", "put", "patch", "delete"}
+	} else {
+		addingMethodQueue = append(addingMethodQueue, method)
 	}
 
-	return err
+	for _, method := range addingMethodQueue {
+		ky := GetCommandKey(id, method)
+		_, err := dir.AddCommand(ctx, &proto.CommandInfo{
+			Id:     id,
+			Method: method,
+			Tags:   tags,
+		})
+		if err == nil {
+			v.commandHandlers[ky] = fn
+		} else {
+			return err
+		}
+	}
+
+	return nil
 }
 
 type localCommandRpcServer struct {
@@ -43,7 +57,8 @@ type localCommandRpcServer struct {
 }
 
 func (v localCommandRpcServer) SendCommand(ctx context.Context, argument *proto.CommandArgument) (*proto.CommandReturn, error) {
-	if handler, ok := v.conn.commandHandlers[argument.GetCommand()]; !ok {
+	ky := GetCommandKey(argument.GetCommand(), argument.GetMethod())
+	if handler, ok := v.conn.commandHandlers[ky]; !ok {
 		return &proto.CommandReturn{
 			Status:  http.StatusNotFound,
 			Payload: []byte(argument.GetCommand() + " not found"),
