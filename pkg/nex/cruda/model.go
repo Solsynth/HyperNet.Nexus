@@ -1,9 +1,8 @@
-package nex
+package cruda
 
 import (
-	"time"
-
 	"gorm.io/gorm"
+	"time"
 )
 
 type BaseModel struct {

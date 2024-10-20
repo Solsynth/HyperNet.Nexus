@@ -1,13 +1,18 @@
 package cruda
 
-import "git.solsynth.dev/hypernet/nexus/pkg/nex"
+import (
+	"git.solsynth.dev/hypernet/nexus/pkg/nex"
+	"gorm.io/gorm"
+)
 
-type CudaConn struct {
+type CrudConn struct {
 	Conn *nex.Conn
+
+	db *gorm.DB
 }
 
-func NewCudaConn(conn *nex.Conn) *CudaConn {
-	return &CudaConn{
+func NewCrudaConn(conn *nex.Conn) *CrudConn {
+	return &CrudConn{
 		Conn: conn,
 	}
 }

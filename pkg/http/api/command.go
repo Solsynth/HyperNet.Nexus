@@ -39,6 +39,15 @@ func invokeCommand(c *fiber.Ctx) error {
 			strings.Join(v, "\n"),
 		)
 	}
+
+	for k, v := range c.Queries() {
+		meta = append(
+			meta,
+			strings.ToLower(fmt.Sprintf("query.%s", strings.ReplaceAll(k, "-", "_"))),
+			v,
+		)
+	}
+
 	ctx := metadata.AppendToOutgoingContext(c.Context(), meta...)
 	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
