@@ -21,8 +21,8 @@ access_token_duration = 300
 refresh_token_duration = 2592000
 
 [database]
-dsn = "host=localhost user=postgres password=password dbname=hy_dealer port=5432 sslmode=disable"
-prefix = "dealer_"
+dsn = "host=localhost user=postgres dbname=postgres password=password port=5432 sslmode=disable"
+prefix = "sn_"
 
 [scraper]
 user-agent = "SolarBot/1.0"

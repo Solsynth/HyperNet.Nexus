@@ -52,9 +52,6 @@ func invokeCommand(c *fiber.Ctx) error {
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	} else {
-		if !out.IsDelivered {
-			log.Debug().Str("id", command).Str("method", method).Msg("Invoking command from HTTP Gateway... failed, delivery not confirmed")
-		}
 		c.Set(fiber.HeaderContentType, out.ContentType)
 		return c.Status(int(out.Status)).Send(out.Payload)
 	}

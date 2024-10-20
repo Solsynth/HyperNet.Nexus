@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package = ".;proto";
+
+package proto;
+
+service DatabaseController {
+  rpc AllocDatabase(AllocDatabaseRequest) returns (AllocDatabaseResponse) {}
+}
+
+message AllocDatabaseRequest {
+  string name = 1;
+}
+
+message AllocDatabaseResponse {
+  bool is_success = 1;
+  string dsn = 2;
+}

@@ -3,27 +3,27 @@ package grpc
 import (
 	"context"
 	"fmt"
+	"git.solsynth.dev/hypernet/nexus/pkg/http/ws"
 
-	"git.solsynth.dev/hypernet/nexus/pkg/internal/services"
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
 	"github.com/samber/lo"
 )
 
-func (v *GrpcServer) CountStreamConnection(ctx context.Context, request *proto.CountConnectionRequest) (*proto.CountConnectionResponse, error) {
-	out := services.ClientCount(uint(request.GetUserId()))
+func (v *Server) CountStreamConnection(ctx context.Context, request *proto.CountConnectionRequest) (*proto.CountConnectionResponse, error) {
+	out := ws.ClientCount(uint(request.GetUserId()))
 	return &proto.CountConnectionResponse{
 		Count: int64(out),
 	}, nil
 }
 
-func (v *GrpcServer) PushStream(ctx context.Context, request *proto.PushStreamRequest) (*proto.PushStreamResponse, error) {
+func (v *Server) PushStream(ctx context.Context, request *proto.PushStreamRequest) (*proto.PushStreamResponse, error) {
 	var cnt int
 	var success int
 	var errs []error
 	if request.UserId != nil {
-		cnt, success, errs = services.WebsocketPush(uint(request.GetUserId()), request.GetBody())
+		cnt, success, errs = ws.WebsocketPush(uint(request.GetUserId()), request.GetBody())
 	} else if request.ClientId != nil {
-		cnt, success, errs = services.WebsocketPushDirect(request.GetClientId(), request.GetBody())
+		cnt, success, errs = ws.WebsocketPushDirect(request.GetClientId(), request.GetBody())
 	} else {
 		return nil, fmt.Errorf("you must give one of the user id or client id")
 	}
@@ -47,12 +47,12 @@ func (v *GrpcServer) PushStream(ctx context.Context, request *proto.PushStreamRe
 	}, nil
 }
 
-func (v *GrpcServer) PushStreamBatch(ctx context.Context, request *proto.PushStreamBatchRequest) (*proto.PushStreamResponse, error) {
+func (v *Server) PushStreamBatch(ctx context.Context, request *proto.PushStreamBatchRequest) (*proto.PushStreamResponse, error) {
 	var cnt int
 	var success int
 	var errs []error
 	if len(request.UserId) != 0 {
-		cnt, success, errs = services.WebsocketPushBatch(
+		cnt, success, errs = ws.WebsocketPushBatch(
 			lo.Map(request.GetUserId(), func(item uint64, idx int) uint {
 				return uint(item)
 			},
@@ -60,7 +60,7 @@ func (v *GrpcServer) PushStreamBatch(ctx context.Context, request *proto.PushStr
 		)
 	}
 	if len(request.ClientId) != 0 {
-		cCnt, cSuccess, cErrs := services.WebsocketPushBatchDirect(request.GetClientId(), request.GetBody())
+		cCnt, cSuccess, cErrs := ws.WebsocketPushBatchDirect(request.GetClientId(), request.GetBody())
 		cnt += cCnt
 		success += cSuccess
 		errs = append(errs, cErrs...)

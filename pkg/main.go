@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/database"
 	"github.com/fatih/color"
 	"os"
 	"os/signal"
@@ -30,7 +31,7 @@ func main() {
 | |\  |  __/>  <| |_| \__ \
 |_| \_|\___/_/\_\\__,_|___/`))
 	fmt.Printf("%s v%s\n", color.New(color.FgHiYellow).Add(color.Bold).Sprintf("Hypernet.Nexus"), pkg.AppVersion)
-	fmt.Printf("The core component of Hypernet (Solar Network)\n")
+	fmt.Printf("The next-generation web application framework\n")
 	color.HiBlack("=====================================================\n")
 
 	// Configure settings
@@ -42,6 +43,20 @@ func main() {
 	// Load settings
 	if err := viper.ReadInConfig(); err != nil {
 		log.Panic().Err(err).Msg("An error occurred when loading settings.")
+	}
+
+	// Connect to database
+	if db, err := database.Connect(viper.GetString("database.dsn")); err != nil {
+		log.Error().Err(err).Msg("An error occurred when connecting to database. Database related features will be disabled.")
+	} else {
+		var version string
+		err := db.QueryRow("SELECT version()").Scan(&version)
+		if err != nil {
+			log.Error().Err(err).Msg("An error occurred when querying database version. Database related features will be disabled.")
+			database.Kdb = nil
+		} else {
+			log.Info().Str("version", version).Msg("Connected to database")
+		}
 	}
 
 	// Server

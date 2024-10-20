@@ -1,4 +1,4 @@
-package services
+package ws
 
 import (
 	"math/rand"

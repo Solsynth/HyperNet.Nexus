@@ -14,19 +14,22 @@ import (
 	health "google.golang.org/grpc/health/grpc_health_v1"
 )
 
-type GrpcServer struct {
+type Server struct {
+	proto.UnimplementedDatabaseControllerServer
 	proto.UnimplementedStreamControllerServer
+	health.UnimplementedHealthServer
 
 	srv *grpc.Server
 }
 
-func NewServer() *GrpcServer {
-	server := &GrpcServer{
+func NewServer() *Server {
+	server := &Server{
 		srv: grpc.NewServer(),
 	}
 
 	proto.RegisterServiceDirectoryServer(server.srv, &directory.ServiceRpcServer{})
 	proto.RegisterCommandControllerServer(server.srv, &directory.CommandRpcServer{})
+	proto.RegisterDatabaseControllerServer(server.srv, server)
 	proto.RegisterStreamControllerServer(server.srv, server)
 	health.RegisterHealthServer(server.srv, server)
 
@@ -35,7 +38,7 @@ func NewServer() *GrpcServer {
 	return server
 }
 
-func (v *GrpcServer) Listen() error {
+func (v *Server) Listen() error {
 	listener, err := net.Listen("tcp", viper.GetString("grpc_bind"))
 	if err != nil {
 		return err

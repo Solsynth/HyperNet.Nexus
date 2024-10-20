@@ -1,6 +1,7 @@
 package api
 
 import (
+	"git.solsynth.dev/hypernet/nexus/pkg/http/ws"
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 )
@@ -22,7 +23,7 @@ func MapAPIs(app *fiber.App) {
 			return err
 		}*/
 		return c.Next()
-	}).Get("/ws", websocket.New(listenWebsocket))
+	}).Get("/ws", websocket.New(ws.Listen))
 
 	app.All("/cgi/:command", invokeCommand)
 }

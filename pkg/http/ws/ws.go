@@ -1,8 +1,7 @@
-package api
+package ws
 
 import (
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/models"
-	"git.solsynth.dev/hypernet/nexus/pkg/internal/services"
 	"git.solsynth.dev/hypernet/nexus/pkg/nex"
 	"github.com/gofiber/contrib/websocket"
 	jsoniter "github.com/json-iterator/go"
@@ -10,11 +9,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-func listenWebsocket(c *websocket.Conn) {
+func Listen(c *websocket.Conn) {
 	user := c.Locals("user").(models.Account)
 
 	// Push connection
-	clientId := services.ClientRegister(user, c)
+	clientId := ClientRegister(user, c)
 	log.Debug().
 		Uint("user", user.ID).
 		Uint64("clientId", clientId).
@@ -78,7 +77,7 @@ func listenWebsocket(c *websocket.Conn) {
 	}
 
 	// Pop connection
-	services.ClientUnregister(user, clientId)
+	ClientUnregister(user, clientId)
 	log.Debug().
 		Uint("user", user.ID).
 		Uint64("clientId", clientId).
