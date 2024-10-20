@@ -48,6 +48,7 @@ func (c CommandRpcServer) SendCommand(ctx context.Context, argument *proto.Comma
 		return &proto.CommandReturn{
 			IsDelivered: false,
 			Status:      http.StatusNotFound,
+			ContentType: "text/plain+error",
 			Payload:     []byte("command not found"),
 		}, nil
 	}
@@ -57,6 +58,7 @@ func (c CommandRpcServer) SendCommand(ctx context.Context, argument *proto.Comma
 		return &proto.CommandReturn{
 			IsDelivered: false,
 			Status:      http.StatusServiceUnavailable,
+			ContentType: "text/plain+error",
 			Payload:     []byte("service unavailable"),
 		}, nil
 	}
@@ -69,6 +71,7 @@ func (c CommandRpcServer) SendCommand(ctx context.Context, argument *proto.Comma
 		return &proto.CommandReturn{
 			IsDelivered: true,
 			Status:      http.StatusInternalServerError,
+			ContentType: "text/plain+error",
 			Payload:     []byte(err.Error()),
 		}, nil
 	}
@@ -96,20 +99,18 @@ func (c CommandRpcServer) SendStreamCommand(g grpc.BidiStreamingServer[proto.Com
 		conn, err := handler.GetGrpcConn()
 
 		ctx, cancel := context.WithTimeout(g.Context(), time.Second*10)
-		result, err := proto.NewCommandControllerClient(conn).SendCommand(ctx, pck)
+		out, err := proto.NewCommandControllerClient(conn).SendCommand(ctx, pck)
 		cancel()
 
 		if err != nil {
 			_ = g.Send(&proto.CommandReturn{
 				IsDelivered: false,
 				Status:      http.StatusInternalServerError,
+				ContentType: "text/plain+error",
 				Payload:     []byte(err.Error()),
 			})
 		} else {
-			_ = g.Send(&proto.CommandReturn{
-				Status:  result.Status,
-				Payload: result.Payload,
-			})
+			_ = g.Send(out)
 		}
 	}
 }

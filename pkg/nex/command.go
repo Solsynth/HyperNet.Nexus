@@ -77,8 +77,9 @@ func (v localCommandRpcServer) SendCommand(ctx context.Context, argument *proto.
 			return nil, err
 		} else {
 			return &proto.CommandReturn{
-				Status:  int32(cc.statusCode),
-				Payload: cc.responseBody,
+				Status:      int32(cc.statusCode),
+				ContentType: cc.contentType,
+				Payload:     cc.responseBody,
 			}, nil
 		}
 	}

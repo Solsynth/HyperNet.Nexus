@@ -26,7 +26,7 @@ func TestHandleCommand(t *testing.T) {
 	}
 
 	err = conn.AddCommand("say.hi", "all", nil, func(ctx *nex.CommandCtx) error {
-		return ctx.Write([]byte("Hello, World!"), http.StatusOK)
+		return ctx.Write([]byte("Hello, World!"), "text/plain", http.StatusOK)
 	})
 	if err != nil {
 		t.Fatal(fmt.Errorf("unable to add command: %v", err))
@@ -34,7 +34,13 @@ func TestHandleCommand(t *testing.T) {
 	}
 	err = conn.AddCommand("echo", "all", nil, func(ctx *nex.CommandCtx) error {
 		t.Log("Received command: ", string(ctx.Read()))
-		return ctx.Write(ctx.Read(), http.StatusOK)
+		return ctx.Write(ctx.Read(), "text/plain", http.StatusOK)
+	})
+	err = conn.AddCommand("echo.details", "all", nil, func(ctx *nex.CommandCtx) error {
+		return ctx.JSON(map[string]any{
+			"values": ctx.Values(),
+			"body":   ctx.Read(),
+		}, http.StatusOK)
 	})
 	if err != nil {
 		t.Fatal(fmt.Errorf("unable to add command: %v", err))

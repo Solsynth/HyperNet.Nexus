@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"git.solsynth.dev/hypernet/nexus/pkg/directory"
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
 	"github.com/gofiber/fiber/v2"
@@ -27,7 +28,18 @@ func invokeCommand(c *fiber.Ctx) error {
 
 	log.Debug().Str("id", command).Str("method", method).Msg("Invoking command from HTTP Gateway...")
 
-	ctx := metadata.AppendToOutgoingContext(c.Context(), "client_id", "http-gateway", "ip", c.IP(), "user_agent", c.Get(fiber.HeaderUserAgent))
+	var meta []string
+	meta = append(meta, "client_id", "http-gateway")
+	meta = append(meta, "net.ip", c.IP())
+	meta = append(meta, "http.user_agent", c.Get(fiber.HeaderUserAgent))
+	for k, v := range c.GetReqHeaders() {
+		meta = append(
+			meta,
+			strings.ToLower(fmt.Sprintf("header.%s", strings.ReplaceAll(k, "-", "_"))),
+			strings.Join(v, "\n"),
+		)
+	}
+	ctx := metadata.AppendToOutgoingContext(c.Context(), meta...)
 	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
 
@@ -43,6 +55,7 @@ func invokeCommand(c *fiber.Ctx) error {
 		if !out.IsDelivered {
 			log.Debug().Str("id", command).Str("method", method).Msg("Invoking command from HTTP Gateway... failed, delivery not confirmed")
 		}
+		c.Set(fiber.HeaderContentType, out.ContentType)
 		return c.Status(int(out.Status)).Send(out.Payload)
 	}
 }
