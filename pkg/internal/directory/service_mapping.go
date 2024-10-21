@@ -2,77 +2,137 @@ package directory
 
 import (
 	"context"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/kv"
 	"git.solsynth.dev/hypernet/nexus/pkg/nex"
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
-	"sync"
+	"github.com/goccy/go-json"
+	clientv3 "go.etcd.io/etcd/client/v3"
+	"math/rand"
 	"time"
 )
 
-// In services, we use sync.Map because it will be both often read and write
-var serviceDirectory sync.Map
+const ServiceInfoKvPrefix = "nexus.service/"
 
-func GetServiceInstance(id string) *ServiceInstance {
-	val, ok := serviceDirectory.Load(id)
-	if ok {
-		return val.(*ServiceInstance)
-	} else {
-		return nil
+func AddServiceInstance(in *ServiceInstance) error {
+	key := ServiceInfoKvPrefix + in.ID
+	data, err := json.Marshal(in)
+	if err != nil {
+		return err
 	}
+
+	_, err = kv.Kv.Put(context.Background(), key, string(data))
+	return err
 }
 
-func GetServiceInstanceByType(t string) *ServiceInstance {
-	var result *ServiceInstance
-	serviceDirectory.Range(func(key, value any) bool {
-		if value.(*ServiceInstance).Type == t {
-			result = value.(*ServiceInstance)
-			return false
-		}
-		return true
-	})
-	return result
+func GetServiceInstance(id string) *ServiceInstance {
+	key := ServiceInfoKvPrefix + id
+	resp, err := kv.Kv.Get(context.Background(), key)
+	if err != nil || len(resp.Kvs) == 0 {
+		return nil
+	}
+
+	var instance ServiceInstance
+	err = json.Unmarshal(resp.Kvs[0].Value, &instance)
+	if err != nil {
+		return nil
+	}
+
+	return &instance
 }
 
 func ListServiceInstance() []*ServiceInstance {
+	resp, err := kv.Kv.Get(context.Background(), ServiceInfoKvPrefix, clientv3.WithPrefix())
+	if err != nil {
+		return nil
+	}
+
 	var result []*ServiceInstance
-	serviceDirectory.Range(func(key, value interface{}) bool {
-		result = append(result, value.(*ServiceInstance))
-		return true
-	})
+	for _, val := range resp.Kvs {
+		var instance ServiceInstance
+		if err := json.Unmarshal(val.Value, &instance); err != nil {
+			continue
+		}
+		result = append(result, &instance)
+	}
 	return result
 }
 
 func ListServiceInstanceByType(t string) []*ServiceInstance {
+	resp, err := kv.Kv.Get(context.Background(), ServiceInfoKvPrefix, clientv3.WithPrefix())
+	if err != nil {
+		return nil
+	}
+
 	var result []*ServiceInstance
-	serviceDirectory.Range(func(key, value interface{}) bool {
-		if value.(*ServiceInstance).Type == t {
-			result = append(result, value.(*ServiceInstance))
+	for _, val := range resp.Kvs {
+		var instance ServiceInstance
+		if err := json.Unmarshal(val.Value, &instance); err != nil {
+			continue
 		}
-		return true
-	})
+		if instance.Type == t {
+			result = append(result, &instance)
+		}
+	}
 	return result
 }
 
-func AddServiceInstance(in *ServiceInstance) {
-	serviceDirectory.Store(in.ID, in)
+var srvRng = rand.New(rand.NewSource(time.Now().UnixNano()))
+
+func GetServiceInstanceByType(t string) *ServiceInstance {
+	resp, err := kv.Kv.Get(context.Background(), ServiceInfoKvPrefix, clientv3.WithPrefix())
+	if err != nil {
+		return nil
+	}
+
+	var instances []*ServiceInstance
+	for _, val := range resp.Kvs {
+		var instance ServiceInstance
+		if err := json.Unmarshal(val.Value, &instance); err != nil {
+			continue
+		}
+		if instance.Type == t {
+			instances = append(instances, &instance)
+		}
+	}
+
+	if len(instances) == 0 {
+		return nil
+	}
+
+	idx := srvRng.Intn(len(instances))
+	return instances[idx]
 }
 
-func RemoveServiceInstance(id string) {
-	serviceDirectory.Delete(id)
+func RemoveServiceInstance(id string) error {
+	key := ServiceInfoKvPrefix + id
+	_, err := kv.Kv.Delete(context.Background(), key)
+	return err
 }
 
-func BroadcastEvent(event string, data any) {
-	serviceDirectory.Range(func(key, value any) bool {
-		conn, err := value.(*ServiceInstance).GetGrpcConn()
+func BroadcastEvent(event string, data any) error {
+	resp, err := kv.Kv.Get(context.Background(), ServiceInfoKvPrefix, clientv3.WithPrefix())
+	if err != nil {
+		return err
+	}
+
+	for _, val := range resp.Kvs {
+		var instance ServiceInstance
+		if err := json.Unmarshal(val.Value, &instance); err != nil {
+			continue
+		}
+
+		conn, err := instance.GetGrpcConn()
 		if err != nil {
-			return true
+			continue
 		}
 
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
 		_, _ = proto.NewDirectoryServiceClient(conn).BroadcastEvent(ctx, &proto.EventInfo{
 			Event: event,
 			Data:  nex.EncodeMap(data),
 		})
-		return true
-	})
+		cancel()
+	}
+
+	return nil
 }

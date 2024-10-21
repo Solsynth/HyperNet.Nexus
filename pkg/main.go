@@ -47,12 +47,16 @@ func main() {
 	}
 
 	// Connect to kv (etcd)
+	log.Info().Msg("Connecting to kv (etcd)...")
 	if err := kv.ConnectEtcd(viper.GetStringSlice("kv.endpoints")); err != nil {
 		log.Error().Err(err).Msg("An error occurred when connecting to kv (etcd), please check your configuration in kv section.")
 		log.Fatal().Msg("Kv is required for service discovery and directory feature, cannot be disabled.")
+	} else {
+		log.Info().Msg("Connected to kv (etcd)!")
 	}
 
 	// Connect to database
+	log.Info().Msg("Connecting to database...")
 	if db, err := database.Connect(viper.GetString("database.dsn")); err != nil {
 		log.Error().Err(err).Msg("An error occurred when connecting to database. Database related features will be disabled.")
 	} else {
@@ -62,7 +66,7 @@ func main() {
 			log.Error().Err(err).Msg("An error occurred when querying database version. Database related features will be disabled.")
 			database.Kdb = nil
 		} else {
-			log.Info().Str("version", version).Msg("Connected to database")
+			log.Info().Str("version", version).Msg("Connected to database!")
 		}
 	}
 

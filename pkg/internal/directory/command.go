@@ -18,5 +18,5 @@ type Command struct {
 	// The implementation of the command, the handler is the service that will be invoked
 	Handler []*ServiceInstance `json:"handler"`
 
-	robinIndex uint
+	RobinIndex uint `json:"robin_index"`
 }

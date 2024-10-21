@@ -75,17 +75,25 @@ func (v *ServiceRpcServer) AddService(ctx context.Context, info *proto.ServiceIn
 		GrpcAddr: info.GetGrpcAddr(),
 		HttpAddr: info.HttpAddr,
 	}
-	AddServiceInstance(in)
-	log.Info().Str("id", clientId).Str("label", info.GetLabel()).Msg("New service registered")
+	err = AddServiceInstance(in)
+	if err == nil {
+		log.Info().Str("id", clientId).Str("label", info.GetLabel()).Msg("New service registered")
+	} else {
+		log.Error().Str("id", clientId).Str("label", info.GetLabel()).Err(err).Msg("Unable to register a service")
+	}
 	return &proto.AddServiceResponse{
-		IsSuccess: true,
+		IsSuccess: err == nil,
 	}, nil
 }
 
 func (v *ServiceRpcServer) RemoveService(ctx context.Context, request *proto.RemoveServiceRequest) (*proto.RemoveServiceResponse, error) {
-	RemoveServiceInstance(request.GetId())
-	log.Info().Str("id", request.GetId()).Msg("A service removed.")
+	err := RemoveServiceInstance(request.GetId())
+	if err == nil {
+		log.Info().Str("id", request.GetId()).Msg("A service removed")
+	} else {
+		log.Error().Str("id", request.GetId()).Err(err).Msg("Unable to remove a service")
+	}
 	return &proto.RemoveServiceResponse{
-		IsSuccess: true,
+		IsSuccess: err == nil,
 	}, nil
 }
