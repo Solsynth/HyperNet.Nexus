@@ -1,24 +1,10 @@
 bind = "0.0.0.0:8001"
 grpc_bind = "0.0.0.0:7001"
 domain = "localhost"
-secret = "LtTjzAGFLshwXhN4ZD4nG5KlMv1MWcsvfv03TSZYnT1VhiAnLIZFTnHUwR0XhGgi"
 
 [debug]
 database = false
 print_routes = false
-
-[mailer]
-name = "Alphabot <alphabot@smartsheep.studio>"
-smtp_host = "smtp.exmail.qq.com"
-smtp_port = 465
-username = "alphabot@smartsheep.studio"
-password = "gz937Zxxzfcd9SeH"
-
-[security]
-cookie_domain = "localhost"
-cookie_samesite = "Lax"
-access_token_duration = 300
-refresh_token_duration = 2592000
 
 [services]
 aliases = { id = "auth", uc = "files", co = "interactive", im = "messaging" }
@@ -30,5 +16,5 @@ prefix = "sn_"
 [kv]
 endpoints = ["localhost:2379"]
 
-[scraper]
-user-agent = "SolarBot/1.0"
+[security]
+public_key = "keys/public_key.pem"

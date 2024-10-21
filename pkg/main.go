@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/auth"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/database"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/http"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/kv"
+	"git.solsynth.dev/hypernet/nexus/pkg/nex/sec"
 	"github.com/fatih/color"
 	"os"
 	"os/signal"
@@ -68,6 +70,14 @@ func main() {
 		} else {
 			log.Info().Str("version", version).Msg("Connected to database!")
 		}
+	}
+
+	// Read the public key for jwt
+	if reader, err := sec.NewJwtReader(viper.GetString("security.public_key")); err != nil {
+		log.Error().Err(err).Msg("An error occurred when reading public key for jwt. Authentication related features will be disabled.")
+	} else {
+		auth.JReader = reader
+		log.Info().Msg("Jwt public key loaded.")
 	}
 
 	// Server
