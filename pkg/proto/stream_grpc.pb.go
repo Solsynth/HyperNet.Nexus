@@ -19,177 +19,177 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	StreamController_CountStreamConnection_FullMethodName = "/proto.StreamController/CountStreamConnection"
-	StreamController_PushStream_FullMethodName            = "/proto.StreamController/PushStream"
-	StreamController_PushStreamBatch_FullMethodName       = "/proto.StreamController/PushStreamBatch"
+	StreamService_CountStreamConnection_FullMethodName = "/proto.StreamService/CountStreamConnection"
+	StreamService_PushStream_FullMethodName            = "/proto.StreamService/PushStream"
+	StreamService_PushStreamBatch_FullMethodName       = "/proto.StreamService/PushStreamBatch"
 )
 
-// StreamControllerClient is the client API for StreamController service.
+// StreamServiceClient is the client API for StreamService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type StreamControllerClient interface {
+type StreamServiceClient interface {
 	CountStreamConnection(ctx context.Context, in *CountConnectionRequest, opts ...grpc.CallOption) (*CountConnectionResponse, error)
 	PushStream(ctx context.Context, in *PushStreamRequest, opts ...grpc.CallOption) (*PushStreamResponse, error)
 	PushStreamBatch(ctx context.Context, in *PushStreamBatchRequest, opts ...grpc.CallOption) (*PushStreamResponse, error)
 }
 
-type streamControllerClient struct {
+type streamServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewStreamControllerClient(cc grpc.ClientConnInterface) StreamControllerClient {
-	return &streamControllerClient{cc}
+func NewStreamServiceClient(cc grpc.ClientConnInterface) StreamServiceClient {
+	return &streamServiceClient{cc}
 }
 
-func (c *streamControllerClient) CountStreamConnection(ctx context.Context, in *CountConnectionRequest, opts ...grpc.CallOption) (*CountConnectionResponse, error) {
+func (c *streamServiceClient) CountStreamConnection(ctx context.Context, in *CountConnectionRequest, opts ...grpc.CallOption) (*CountConnectionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CountConnectionResponse)
-	err := c.cc.Invoke(ctx, StreamController_CountStreamConnection_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, StreamService_CountStreamConnection_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *streamControllerClient) PushStream(ctx context.Context, in *PushStreamRequest, opts ...grpc.CallOption) (*PushStreamResponse, error) {
+func (c *streamServiceClient) PushStream(ctx context.Context, in *PushStreamRequest, opts ...grpc.CallOption) (*PushStreamResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PushStreamResponse)
-	err := c.cc.Invoke(ctx, StreamController_PushStream_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, StreamService_PushStream_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *streamControllerClient) PushStreamBatch(ctx context.Context, in *PushStreamBatchRequest, opts ...grpc.CallOption) (*PushStreamResponse, error) {
+func (c *streamServiceClient) PushStreamBatch(ctx context.Context, in *PushStreamBatchRequest, opts ...grpc.CallOption) (*PushStreamResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PushStreamResponse)
-	err := c.cc.Invoke(ctx, StreamController_PushStreamBatch_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, StreamService_PushStreamBatch_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// StreamControllerServer is the server API for StreamController service.
-// All implementations must embed UnimplementedStreamControllerServer
+// StreamServiceServer is the server API for StreamService service.
+// All implementations must embed UnimplementedStreamServiceServer
 // for forward compatibility.
-type StreamControllerServer interface {
+type StreamServiceServer interface {
 	CountStreamConnection(context.Context, *CountConnectionRequest) (*CountConnectionResponse, error)
 	PushStream(context.Context, *PushStreamRequest) (*PushStreamResponse, error)
 	PushStreamBatch(context.Context, *PushStreamBatchRequest) (*PushStreamResponse, error)
-	mustEmbedUnimplementedStreamControllerServer()
+	mustEmbedUnimplementedStreamServiceServer()
 }
 
-// UnimplementedStreamControllerServer must be embedded to have
+// UnimplementedStreamServiceServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedStreamControllerServer struct{}
+type UnimplementedStreamServiceServer struct{}
 
-func (UnimplementedStreamControllerServer) CountStreamConnection(context.Context, *CountConnectionRequest) (*CountConnectionResponse, error) {
+func (UnimplementedStreamServiceServer) CountStreamConnection(context.Context, *CountConnectionRequest) (*CountConnectionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CountStreamConnection not implemented")
 }
-func (UnimplementedStreamControllerServer) PushStream(context.Context, *PushStreamRequest) (*PushStreamResponse, error) {
+func (UnimplementedStreamServiceServer) PushStream(context.Context, *PushStreamRequest) (*PushStreamResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PushStream not implemented")
 }
-func (UnimplementedStreamControllerServer) PushStreamBatch(context.Context, *PushStreamBatchRequest) (*PushStreamResponse, error) {
+func (UnimplementedStreamServiceServer) PushStreamBatch(context.Context, *PushStreamBatchRequest) (*PushStreamResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PushStreamBatch not implemented")
 }
-func (UnimplementedStreamControllerServer) mustEmbedUnimplementedStreamControllerServer() {}
-func (UnimplementedStreamControllerServer) testEmbeddedByValue()                          {}
+func (UnimplementedStreamServiceServer) mustEmbedUnimplementedStreamServiceServer() {}
+func (UnimplementedStreamServiceServer) testEmbeddedByValue()                       {}
 
-// UnsafeStreamControllerServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to StreamControllerServer will
+// UnsafeStreamServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to StreamServiceServer will
 // result in compilation errors.
-type UnsafeStreamControllerServer interface {
-	mustEmbedUnimplementedStreamControllerServer()
+type UnsafeStreamServiceServer interface {
+	mustEmbedUnimplementedStreamServiceServer()
 }
 
-func RegisterStreamControllerServer(s grpc.ServiceRegistrar, srv StreamControllerServer) {
-	// If the following call pancis, it indicates UnimplementedStreamControllerServer was
+func RegisterStreamServiceServer(s grpc.ServiceRegistrar, srv StreamServiceServer) {
+	// If the following call pancis, it indicates UnimplementedStreamServiceServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&StreamController_ServiceDesc, srv)
+	s.RegisterService(&StreamService_ServiceDesc, srv)
 }
 
-func _StreamController_CountStreamConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _StreamService_CountStreamConnection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CountConnectionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StreamControllerServer).CountStreamConnection(ctx, in)
+		return srv.(StreamServiceServer).CountStreamConnection(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StreamController_CountStreamConnection_FullMethodName,
+		FullMethod: StreamService_CountStreamConnection_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StreamControllerServer).CountStreamConnection(ctx, req.(*CountConnectionRequest))
+		return srv.(StreamServiceServer).CountStreamConnection(ctx, req.(*CountConnectionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StreamController_PushStream_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _StreamService_PushStream_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PushStreamRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StreamControllerServer).PushStream(ctx, in)
+		return srv.(StreamServiceServer).PushStream(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StreamController_PushStream_FullMethodName,
+		FullMethod: StreamService_PushStream_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StreamControllerServer).PushStream(ctx, req.(*PushStreamRequest))
+		return srv.(StreamServiceServer).PushStream(ctx, req.(*PushStreamRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _StreamController_PushStreamBatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _StreamService_PushStreamBatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PushStreamBatchRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(StreamControllerServer).PushStreamBatch(ctx, in)
+		return srv.(StreamServiceServer).PushStreamBatch(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: StreamController_PushStreamBatch_FullMethodName,
+		FullMethod: StreamService_PushStreamBatch_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StreamControllerServer).PushStreamBatch(ctx, req.(*PushStreamBatchRequest))
+		return srv.(StreamServiceServer).PushStreamBatch(ctx, req.(*PushStreamBatchRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// StreamController_ServiceDesc is the grpc.ServiceDesc for StreamController service.
+// StreamService_ServiceDesc is the grpc.ServiceDesc for StreamService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var StreamController_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "proto.StreamController",
-	HandlerType: (*StreamControllerServer)(nil),
+var StreamService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "proto.StreamService",
+	HandlerType: (*StreamServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CountStreamConnection",
-			Handler:    _StreamController_CountStreamConnection_Handler,
+			Handler:    _StreamService_CountStreamConnection_Handler,
 		},
 		{
 			MethodName: "PushStream",
-			Handler:    _StreamController_PushStream_Handler,
+			Handler:    _StreamService_PushStream_Handler,
 		},
 		{
 			MethodName: "PushStreamBatch",
-			Handler:    _StreamController_PushStreamBatch_Handler,
+			Handler:    _StreamService_PushStreamBatch_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

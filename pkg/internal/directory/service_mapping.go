@@ -69,7 +69,7 @@ func BroadcastEvent(event string, data any) {
 
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		_, _ = proto.NewServiceDirectoryClient(conn).BroadcastEvent(ctx, &proto.EventInfo{
+		_, _ = proto.NewDirectoryServiceClient(conn).BroadcastEvent(ctx, &proto.EventInfo{
 			Event: event,
 			Data:  nex.EncodeMap(data),
 		})

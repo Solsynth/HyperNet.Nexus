@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/database"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/http"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/kv"
 	"github.com/fatih/color"
 	"os"
 	"os/signal"
@@ -43,6 +44,12 @@ func main() {
 	// Load settings
 	if err := viper.ReadInConfig(); err != nil {
 		log.Panic().Err(err).Msg("An error occurred when loading settings.")
+	}
+
+	// Connect to kv (etcd)
+	if err := kv.ConnectEtcd(viper.GetStringSlice("kv.endpoints")); err != nil {
+		log.Error().Err(err).Msg("An error occurred when connecting to kv (etcd), please check your configuration in kv section.")
+		log.Fatal().Msg("Kv is required for service discovery and directory feature, cannot be disabled.")
 	}
 
 	// Connect to database

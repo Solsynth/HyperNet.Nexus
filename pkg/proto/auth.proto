@@ -4,7 +4,7 @@ option go_package = ".;proto";
 
 package proto;
 
-service Auth {
+service AuthService {
   rpc Authenticate(AuthRequest) returns (AuthReply) {}
   rpc EnsurePermGranted(CheckPermRequest) returns (CheckPermResponse) {}
   rpc EnsureUserPermGranted(CheckUserPermRequest) returns (CheckUserPermResponse) {}

@@ -12,7 +12,7 @@ import (
 )
 
 type CommandRpcServer struct {
-	proto.UnimplementedCommandControllerServer
+	proto.UnimplementedCommandProviderServer
 }
 
 func (c CommandRpcServer) AddCommand(ctx context.Context, info *proto.CommandInfo) (*proto.AddCommandResponse, error) {
@@ -66,7 +66,7 @@ func (c CommandRpcServer) SendCommand(ctx context.Context, argument *proto.Comma
 	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
 
-	out, err := proto.NewCommandControllerClient(conn).SendCommand(ctx, argument)
+	out, err := proto.NewCommandProviderClient(conn).SendCommand(ctx, argument)
 	if err != nil {
 		return &proto.CommandReturn{
 			IsDelivered: true,
@@ -99,7 +99,7 @@ func (c CommandRpcServer) SendStreamCommand(g grpc.BidiStreamingServer[proto.Com
 		conn, err := handler.GetGrpcConn()
 
 		ctx, cancel := context.WithTimeout(g.Context(), time.Second*10)
-		out, err := proto.NewCommandControllerClient(conn).SendCommand(ctx, pck)
+		out, err := proto.NewCommandProviderClient(conn).SendCommand(ctx, pck)
 		cancel()
 
 		if err != nil {

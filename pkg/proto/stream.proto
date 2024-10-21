@@ -4,7 +4,7 @@ option go_package = ".;proto";
 
 package proto;
 
-service StreamController {
+service StreamService {
   rpc CountStreamConnection(CountConnectionRequest) returns (CountConnectionResponse) {}
   rpc PushStream(PushStreamRequest) returns (PushStreamResponse) {}
   rpc PushStreamBatch(PushStreamBatchRequest) returns (PushStreamResponse) {}

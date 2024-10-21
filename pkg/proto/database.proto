@@ -4,7 +4,7 @@ option go_package = ".;proto";
 
 package proto;
 
-service DatabaseController {
+service DatabaseService {
   rpc AllocDatabase(AllocDatabaseRequest) returns (AllocDatabaseResponse) {}
 }
 

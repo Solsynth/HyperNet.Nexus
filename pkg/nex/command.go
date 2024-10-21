@@ -22,7 +22,7 @@ func GetCommandKey(id, method string) string {
 
 func (v *Conn) AddCommand(id, method string, tags []string, fn CommandHandler) error {
 	method = strings.ToLower(method)
-	dir := proto.NewCommandControllerClient(v.nexusConn)
+	dir := proto.NewCommandProviderClient(v.nexusConn)
 	ctx := context.Background()
 	ctx = metadata.AppendToOutgoingContext(ctx, "client_id", v.Info.Id)
 
@@ -53,7 +53,7 @@ func (v *Conn) AddCommand(id, method string, tags []string, fn CommandHandler) e
 type localCommandRpcServer struct {
 	conn *Conn
 
-	proto.UnimplementedCommandControllerServer
+	proto.UnimplementedCommandProviderServer
 	health.UnimplementedHealthServer
 }
 
@@ -137,7 +137,7 @@ func (v localCommandRpcServer) Watch(request *health.HealthCheckRequest, server 
 func (v *Conn) RunCommands(addr string) error {
 	v.commandServer = grpc.NewServer()
 	service := &localCommandRpcServer{conn: v}
-	proto.RegisterCommandControllerServer(v.commandServer, service)
+	proto.RegisterCommandProviderServer(v.commandServer, service)
 	health.RegisterHealthServer(v.commandServer, service)
 	reflection.Register(v.commandServer)
 

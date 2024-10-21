@@ -4,7 +4,7 @@ option go_package = ".;proto";
 
 package proto;
 
-service ServiceDirectory {
+service DirectoryService {
   rpc GetService(GetServiceRequest) returns (GetServiceResponse) {}
   rpc ListService(ListServiceRequest) returns (ListServiceResponse) {}
   rpc AddService(ServiceInfo) returns (AddServiceResponse) {}

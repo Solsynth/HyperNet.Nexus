@@ -27,5 +27,8 @@ aliases = { id = "auth", uc = "files", co = "interactive", im = "messaging" }
 dsn = "host=localhost user=postgres dbname=postgres password=password port=5432 sslmode=disable"
 prefix = "sn_"
 
+[kv]
+endpoints = ["localhost:2379"]
+
 [scraper]
 user-agent = "SolarBot/1.0"

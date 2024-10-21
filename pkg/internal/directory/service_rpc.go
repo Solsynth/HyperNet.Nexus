@@ -12,7 +12,7 @@ import (
 )
 
 type ServiceRpcServer struct {
-	proto.UnimplementedServiceDirectoryServer
+	proto.UnimplementedDirectoryServiceServer
 }
 
 func instantiationService(in *ServiceInstance) *proto.ServiceInfo {

@@ -19,63 +19,63 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CommandController_AddCommand_FullMethodName        = "/proto.CommandController/AddCommand"
-	CommandController_RemoveCommand_FullMethodName     = "/proto.CommandController/RemoveCommand"
-	CommandController_SendCommand_FullMethodName       = "/proto.CommandController/SendCommand"
-	CommandController_SendStreamCommand_FullMethodName = "/proto.CommandController/SendStreamCommand"
+	CommandProvider_AddCommand_FullMethodName        = "/proto.CommandProvider/AddCommand"
+	CommandProvider_RemoveCommand_FullMethodName     = "/proto.CommandProvider/RemoveCommand"
+	CommandProvider_SendCommand_FullMethodName       = "/proto.CommandProvider/SendCommand"
+	CommandProvider_SendStreamCommand_FullMethodName = "/proto.CommandProvider/SendStreamCommand"
 )
 
-// CommandControllerClient is the client API for CommandController service.
+// CommandProviderClient is the client API for CommandProvider service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type CommandControllerClient interface {
+type CommandProviderClient interface {
 	AddCommand(ctx context.Context, in *CommandInfo, opts ...grpc.CallOption) (*AddCommandResponse, error)
 	RemoveCommand(ctx context.Context, in *CommandLookupRequest, opts ...grpc.CallOption) (*RemoveCommandResponse, error)
 	SendCommand(ctx context.Context, in *CommandArgument, opts ...grpc.CallOption) (*CommandReturn, error)
 	SendStreamCommand(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[CommandArgument, CommandReturn], error)
 }
 
-type commandControllerClient struct {
+type commandProviderClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewCommandControllerClient(cc grpc.ClientConnInterface) CommandControllerClient {
-	return &commandControllerClient{cc}
+func NewCommandProviderClient(cc grpc.ClientConnInterface) CommandProviderClient {
+	return &commandProviderClient{cc}
 }
 
-func (c *commandControllerClient) AddCommand(ctx context.Context, in *CommandInfo, opts ...grpc.CallOption) (*AddCommandResponse, error) {
+func (c *commandProviderClient) AddCommand(ctx context.Context, in *CommandInfo, opts ...grpc.CallOption) (*AddCommandResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AddCommandResponse)
-	err := c.cc.Invoke(ctx, CommandController_AddCommand_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CommandProvider_AddCommand_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *commandControllerClient) RemoveCommand(ctx context.Context, in *CommandLookupRequest, opts ...grpc.CallOption) (*RemoveCommandResponse, error) {
+func (c *commandProviderClient) RemoveCommand(ctx context.Context, in *CommandLookupRequest, opts ...grpc.CallOption) (*RemoveCommandResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RemoveCommandResponse)
-	err := c.cc.Invoke(ctx, CommandController_RemoveCommand_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CommandProvider_RemoveCommand_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *commandControllerClient) SendCommand(ctx context.Context, in *CommandArgument, opts ...grpc.CallOption) (*CommandReturn, error) {
+func (c *commandProviderClient) SendCommand(ctx context.Context, in *CommandArgument, opts ...grpc.CallOption) (*CommandReturn, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CommandReturn)
-	err := c.cc.Invoke(ctx, CommandController_SendCommand_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, CommandProvider_SendCommand_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *commandControllerClient) SendStreamCommand(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[CommandArgument, CommandReturn], error) {
+func (c *commandProviderClient) SendStreamCommand(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[CommandArgument, CommandReturn], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &CommandController_ServiceDesc.Streams[0], CommandController_SendStreamCommand_FullMethodName, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &CommandProvider_ServiceDesc.Streams[0], CommandProvider_SendStreamCommand_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -84,144 +84,144 @@ func (c *commandControllerClient) SendStreamCommand(ctx context.Context, opts ..
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type CommandController_SendStreamCommandClient = grpc.BidiStreamingClient[CommandArgument, CommandReturn]
+type CommandProvider_SendStreamCommandClient = grpc.BidiStreamingClient[CommandArgument, CommandReturn]
 
-// CommandControllerServer is the server API for CommandController service.
-// All implementations must embed UnimplementedCommandControllerServer
+// CommandProviderServer is the server API for CommandProvider service.
+// All implementations must embed UnimplementedCommandProviderServer
 // for forward compatibility.
-type CommandControllerServer interface {
+type CommandProviderServer interface {
 	AddCommand(context.Context, *CommandInfo) (*AddCommandResponse, error)
 	RemoveCommand(context.Context, *CommandLookupRequest) (*RemoveCommandResponse, error)
 	SendCommand(context.Context, *CommandArgument) (*CommandReturn, error)
 	SendStreamCommand(grpc.BidiStreamingServer[CommandArgument, CommandReturn]) error
-	mustEmbedUnimplementedCommandControllerServer()
+	mustEmbedUnimplementedCommandProviderServer()
 }
 
-// UnimplementedCommandControllerServer must be embedded to have
+// UnimplementedCommandProviderServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedCommandControllerServer struct{}
+type UnimplementedCommandProviderServer struct{}
 
-func (UnimplementedCommandControllerServer) AddCommand(context.Context, *CommandInfo) (*AddCommandResponse, error) {
+func (UnimplementedCommandProviderServer) AddCommand(context.Context, *CommandInfo) (*AddCommandResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddCommand not implemented")
 }
-func (UnimplementedCommandControllerServer) RemoveCommand(context.Context, *CommandLookupRequest) (*RemoveCommandResponse, error) {
+func (UnimplementedCommandProviderServer) RemoveCommand(context.Context, *CommandLookupRequest) (*RemoveCommandResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveCommand not implemented")
 }
-func (UnimplementedCommandControllerServer) SendCommand(context.Context, *CommandArgument) (*CommandReturn, error) {
+func (UnimplementedCommandProviderServer) SendCommand(context.Context, *CommandArgument) (*CommandReturn, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendCommand not implemented")
 }
-func (UnimplementedCommandControllerServer) SendStreamCommand(grpc.BidiStreamingServer[CommandArgument, CommandReturn]) error {
+func (UnimplementedCommandProviderServer) SendStreamCommand(grpc.BidiStreamingServer[CommandArgument, CommandReturn]) error {
 	return status.Errorf(codes.Unimplemented, "method SendStreamCommand not implemented")
 }
-func (UnimplementedCommandControllerServer) mustEmbedUnimplementedCommandControllerServer() {}
-func (UnimplementedCommandControllerServer) testEmbeddedByValue()                           {}
+func (UnimplementedCommandProviderServer) mustEmbedUnimplementedCommandProviderServer() {}
+func (UnimplementedCommandProviderServer) testEmbeddedByValue()                         {}
 
-// UnsafeCommandControllerServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to CommandControllerServer will
+// UnsafeCommandProviderServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CommandProviderServer will
 // result in compilation errors.
-type UnsafeCommandControllerServer interface {
-	mustEmbedUnimplementedCommandControllerServer()
+type UnsafeCommandProviderServer interface {
+	mustEmbedUnimplementedCommandProviderServer()
 }
 
-func RegisterCommandControllerServer(s grpc.ServiceRegistrar, srv CommandControllerServer) {
-	// If the following call pancis, it indicates UnimplementedCommandControllerServer was
+func RegisterCommandProviderServer(s grpc.ServiceRegistrar, srv CommandProviderServer) {
+	// If the following call pancis, it indicates UnimplementedCommandProviderServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&CommandController_ServiceDesc, srv)
+	s.RegisterService(&CommandProvider_ServiceDesc, srv)
 }
 
-func _CommandController_AddCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CommandProvider_AddCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CommandInfo)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CommandControllerServer).AddCommand(ctx, in)
+		return srv.(CommandProviderServer).AddCommand(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CommandController_AddCommand_FullMethodName,
+		FullMethod: CommandProvider_AddCommand_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommandControllerServer).AddCommand(ctx, req.(*CommandInfo))
+		return srv.(CommandProviderServer).AddCommand(ctx, req.(*CommandInfo))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CommandController_RemoveCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CommandProvider_RemoveCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CommandLookupRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CommandControllerServer).RemoveCommand(ctx, in)
+		return srv.(CommandProviderServer).RemoveCommand(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CommandController_RemoveCommand_FullMethodName,
+		FullMethod: CommandProvider_RemoveCommand_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommandControllerServer).RemoveCommand(ctx, req.(*CommandLookupRequest))
+		return srv.(CommandProviderServer).RemoveCommand(ctx, req.(*CommandLookupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CommandController_SendCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _CommandProvider_SendCommand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CommandArgument)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CommandControllerServer).SendCommand(ctx, in)
+		return srv.(CommandProviderServer).SendCommand(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CommandController_SendCommand_FullMethodName,
+		FullMethod: CommandProvider_SendCommand_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CommandControllerServer).SendCommand(ctx, req.(*CommandArgument))
+		return srv.(CommandProviderServer).SendCommand(ctx, req.(*CommandArgument))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CommandController_SendStreamCommand_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(CommandControllerServer).SendStreamCommand(&grpc.GenericServerStream[CommandArgument, CommandReturn]{ServerStream: stream})
+func _CommandProvider_SendStreamCommand_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(CommandProviderServer).SendStreamCommand(&grpc.GenericServerStream[CommandArgument, CommandReturn]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type CommandController_SendStreamCommandServer = grpc.BidiStreamingServer[CommandArgument, CommandReturn]
+type CommandProvider_SendStreamCommandServer = grpc.BidiStreamingServer[CommandArgument, CommandReturn]
 
-// CommandController_ServiceDesc is the grpc.ServiceDesc for CommandController service.
+// CommandProvider_ServiceDesc is the grpc.ServiceDesc for CommandProvider service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var CommandController_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "proto.CommandController",
-	HandlerType: (*CommandControllerServer)(nil),
+var CommandProvider_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "proto.CommandProvider",
+	HandlerType: (*CommandProviderServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "AddCommand",
-			Handler:    _CommandController_AddCommand_Handler,
+			Handler:    _CommandProvider_AddCommand_Handler,
 		},
 		{
 			MethodName: "RemoveCommand",
-			Handler:    _CommandController_RemoveCommand_Handler,
+			Handler:    _CommandProvider_RemoveCommand_Handler,
 		},
 		{
 			MethodName: "SendCommand",
-			Handler:    _CommandController_SendCommand_Handler,
+			Handler:    _CommandProvider_SendCommand_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "SendStreamCommand",
-			Handler:       _CommandController_SendStreamCommand_Handler,
+			Handler:       _CommandProvider_SendStreamCommand_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},

@@ -45,7 +45,7 @@ func NewNexusConn(addr string, info *proto.ServiceInfo) (*Conn, error) {
 }
 
 func (v *Conn) RegisterService() error {
-	dir := proto.NewServiceDirectoryClient(v.nexusConn)
+	dir := proto.NewDirectoryServiceClient(v.nexusConn)
 	ctx := context.Background()
 	ctx = metadata.AppendToOutgoingContext(ctx, "client_id", v.Info.Id)
 	_, err := dir.AddService(ctx, v.Info)
@@ -91,7 +91,7 @@ func (v *Conn) GetClientGrpcConn(t string) (*grpc.ClientConn, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
-	out, err := proto.NewServiceDirectoryClient(v.nexusConn).GetService(ctx, &proto.GetServiceRequest{
+	out, err := proto.NewDirectoryServiceClient(v.nexusConn).GetService(ctx, &proto.GetServiceRequest{
 		Type: &t,
 	})
 	if err != nil {

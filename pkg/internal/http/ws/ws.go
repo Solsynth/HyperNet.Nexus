@@ -60,7 +60,7 @@ func Listen(c *websocket.Conn) {
 				continue
 			}
 
-			sc := proto.NewStreamControllerClient(pc)
+			sc := proto.NewStreamServiceClient(pc)
 			_, err = sc.EmitStreamEvent(context.Background(), &proto.StreamEventRequest{
 				Event:    packet.Action,
 				UserId:   uint64(user.ID),

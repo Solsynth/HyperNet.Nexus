@@ -19,17 +19,17 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ServiceDirectory_GetService_FullMethodName     = "/proto.ServiceDirectory/GetService"
-	ServiceDirectory_ListService_FullMethodName    = "/proto.ServiceDirectory/ListService"
-	ServiceDirectory_AddService_FullMethodName     = "/proto.ServiceDirectory/AddService"
-	ServiceDirectory_RemoveService_FullMethodName  = "/proto.ServiceDirectory/RemoveService"
-	ServiceDirectory_BroadcastEvent_FullMethodName = "/proto.ServiceDirectory/BroadcastEvent"
+	DirectoryService_GetService_FullMethodName     = "/proto.DirectoryService/GetService"
+	DirectoryService_ListService_FullMethodName    = "/proto.DirectoryService/ListService"
+	DirectoryService_AddService_FullMethodName     = "/proto.DirectoryService/AddService"
+	DirectoryService_RemoveService_FullMethodName  = "/proto.DirectoryService/RemoveService"
+	DirectoryService_BroadcastEvent_FullMethodName = "/proto.DirectoryService/BroadcastEvent"
 )
 
-// ServiceDirectoryClient is the client API for ServiceDirectory service.
+// DirectoryServiceClient is the client API for DirectoryService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ServiceDirectoryClient interface {
+type DirectoryServiceClient interface {
 	GetService(ctx context.Context, in *GetServiceRequest, opts ...grpc.CallOption) (*GetServiceResponse, error)
 	ListService(ctx context.Context, in *ListServiceRequest, opts ...grpc.CallOption) (*ListServiceResponse, error)
 	AddService(ctx context.Context, in *ServiceInfo, opts ...grpc.CallOption) (*AddServiceResponse, error)
@@ -37,235 +37,235 @@ type ServiceDirectoryClient interface {
 	BroadcastEvent(ctx context.Context, in *EventInfo, opts ...grpc.CallOption) (*EventResponse, error)
 }
 
-type serviceDirectoryClient struct {
+type directoryServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewServiceDirectoryClient(cc grpc.ClientConnInterface) ServiceDirectoryClient {
-	return &serviceDirectoryClient{cc}
+func NewDirectoryServiceClient(cc grpc.ClientConnInterface) DirectoryServiceClient {
+	return &directoryServiceClient{cc}
 }
 
-func (c *serviceDirectoryClient) GetService(ctx context.Context, in *GetServiceRequest, opts ...grpc.CallOption) (*GetServiceResponse, error) {
+func (c *directoryServiceClient) GetService(ctx context.Context, in *GetServiceRequest, opts ...grpc.CallOption) (*GetServiceResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetServiceResponse)
-	err := c.cc.Invoke(ctx, ServiceDirectory_GetService_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, DirectoryService_GetService_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *serviceDirectoryClient) ListService(ctx context.Context, in *ListServiceRequest, opts ...grpc.CallOption) (*ListServiceResponse, error) {
+func (c *directoryServiceClient) ListService(ctx context.Context, in *ListServiceRequest, opts ...grpc.CallOption) (*ListServiceResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListServiceResponse)
-	err := c.cc.Invoke(ctx, ServiceDirectory_ListService_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, DirectoryService_ListService_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *serviceDirectoryClient) AddService(ctx context.Context, in *ServiceInfo, opts ...grpc.CallOption) (*AddServiceResponse, error) {
+func (c *directoryServiceClient) AddService(ctx context.Context, in *ServiceInfo, opts ...grpc.CallOption) (*AddServiceResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AddServiceResponse)
-	err := c.cc.Invoke(ctx, ServiceDirectory_AddService_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, DirectoryService_AddService_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *serviceDirectoryClient) RemoveService(ctx context.Context, in *RemoveServiceRequest, opts ...grpc.CallOption) (*RemoveServiceResponse, error) {
+func (c *directoryServiceClient) RemoveService(ctx context.Context, in *RemoveServiceRequest, opts ...grpc.CallOption) (*RemoveServiceResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RemoveServiceResponse)
-	err := c.cc.Invoke(ctx, ServiceDirectory_RemoveService_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, DirectoryService_RemoveService_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *serviceDirectoryClient) BroadcastEvent(ctx context.Context, in *EventInfo, opts ...grpc.CallOption) (*EventResponse, error) {
+func (c *directoryServiceClient) BroadcastEvent(ctx context.Context, in *EventInfo, opts ...grpc.CallOption) (*EventResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(EventResponse)
-	err := c.cc.Invoke(ctx, ServiceDirectory_BroadcastEvent_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, DirectoryService_BroadcastEvent_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ServiceDirectoryServer is the server API for ServiceDirectory service.
-// All implementations must embed UnimplementedServiceDirectoryServer
+// DirectoryServiceServer is the server API for DirectoryService service.
+// All implementations must embed UnimplementedDirectoryServiceServer
 // for forward compatibility.
-type ServiceDirectoryServer interface {
+type DirectoryServiceServer interface {
 	GetService(context.Context, *GetServiceRequest) (*GetServiceResponse, error)
 	ListService(context.Context, *ListServiceRequest) (*ListServiceResponse, error)
 	AddService(context.Context, *ServiceInfo) (*AddServiceResponse, error)
 	RemoveService(context.Context, *RemoveServiceRequest) (*RemoveServiceResponse, error)
 	BroadcastEvent(context.Context, *EventInfo) (*EventResponse, error)
-	mustEmbedUnimplementedServiceDirectoryServer()
+	mustEmbedUnimplementedDirectoryServiceServer()
 }
 
-// UnimplementedServiceDirectoryServer must be embedded to have
+// UnimplementedDirectoryServiceServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedServiceDirectoryServer struct{}
+type UnimplementedDirectoryServiceServer struct{}
 
-func (UnimplementedServiceDirectoryServer) GetService(context.Context, *GetServiceRequest) (*GetServiceResponse, error) {
+func (UnimplementedDirectoryServiceServer) GetService(context.Context, *GetServiceRequest) (*GetServiceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetService not implemented")
 }
-func (UnimplementedServiceDirectoryServer) ListService(context.Context, *ListServiceRequest) (*ListServiceResponse, error) {
+func (UnimplementedDirectoryServiceServer) ListService(context.Context, *ListServiceRequest) (*ListServiceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListService not implemented")
 }
-func (UnimplementedServiceDirectoryServer) AddService(context.Context, *ServiceInfo) (*AddServiceResponse, error) {
+func (UnimplementedDirectoryServiceServer) AddService(context.Context, *ServiceInfo) (*AddServiceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddService not implemented")
 }
-func (UnimplementedServiceDirectoryServer) RemoveService(context.Context, *RemoveServiceRequest) (*RemoveServiceResponse, error) {
+func (UnimplementedDirectoryServiceServer) RemoveService(context.Context, *RemoveServiceRequest) (*RemoveServiceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveService not implemented")
 }
-func (UnimplementedServiceDirectoryServer) BroadcastEvent(context.Context, *EventInfo) (*EventResponse, error) {
+func (UnimplementedDirectoryServiceServer) BroadcastEvent(context.Context, *EventInfo) (*EventResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BroadcastEvent not implemented")
 }
-func (UnimplementedServiceDirectoryServer) mustEmbedUnimplementedServiceDirectoryServer() {}
-func (UnimplementedServiceDirectoryServer) testEmbeddedByValue()                          {}
+func (UnimplementedDirectoryServiceServer) mustEmbedUnimplementedDirectoryServiceServer() {}
+func (UnimplementedDirectoryServiceServer) testEmbeddedByValue()                          {}
 
-// UnsafeServiceDirectoryServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ServiceDirectoryServer will
+// UnsafeDirectoryServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to DirectoryServiceServer will
 // result in compilation errors.
-type UnsafeServiceDirectoryServer interface {
-	mustEmbedUnimplementedServiceDirectoryServer()
+type UnsafeDirectoryServiceServer interface {
+	mustEmbedUnimplementedDirectoryServiceServer()
 }
 
-func RegisterServiceDirectoryServer(s grpc.ServiceRegistrar, srv ServiceDirectoryServer) {
-	// If the following call pancis, it indicates UnimplementedServiceDirectoryServer was
+func RegisterDirectoryServiceServer(s grpc.ServiceRegistrar, srv DirectoryServiceServer) {
+	// If the following call pancis, it indicates UnimplementedDirectoryServiceServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&ServiceDirectory_ServiceDesc, srv)
+	s.RegisterService(&DirectoryService_ServiceDesc, srv)
 }
 
-func _ServiceDirectory_GetService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _DirectoryService_GetService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetServiceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ServiceDirectoryServer).GetService(ctx, in)
+		return srv.(DirectoryServiceServer).GetService(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ServiceDirectory_GetService_FullMethodName,
+		FullMethod: DirectoryService_GetService_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServiceDirectoryServer).GetService(ctx, req.(*GetServiceRequest))
+		return srv.(DirectoryServiceServer).GetService(ctx, req.(*GetServiceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ServiceDirectory_ListService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _DirectoryService_ListService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListServiceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ServiceDirectoryServer).ListService(ctx, in)
+		return srv.(DirectoryServiceServer).ListService(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ServiceDirectory_ListService_FullMethodName,
+		FullMethod: DirectoryService_ListService_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServiceDirectoryServer).ListService(ctx, req.(*ListServiceRequest))
+		return srv.(DirectoryServiceServer).ListService(ctx, req.(*ListServiceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ServiceDirectory_AddService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _DirectoryService_AddService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ServiceInfo)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ServiceDirectoryServer).AddService(ctx, in)
+		return srv.(DirectoryServiceServer).AddService(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ServiceDirectory_AddService_FullMethodName,
+		FullMethod: DirectoryService_AddService_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServiceDirectoryServer).AddService(ctx, req.(*ServiceInfo))
+		return srv.(DirectoryServiceServer).AddService(ctx, req.(*ServiceInfo))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ServiceDirectory_RemoveService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _DirectoryService_RemoveService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RemoveServiceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ServiceDirectoryServer).RemoveService(ctx, in)
+		return srv.(DirectoryServiceServer).RemoveService(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ServiceDirectory_RemoveService_FullMethodName,
+		FullMethod: DirectoryService_RemoveService_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServiceDirectoryServer).RemoveService(ctx, req.(*RemoveServiceRequest))
+		return srv.(DirectoryServiceServer).RemoveService(ctx, req.(*RemoveServiceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ServiceDirectory_BroadcastEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _DirectoryService_BroadcastEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EventInfo)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ServiceDirectoryServer).BroadcastEvent(ctx, in)
+		return srv.(DirectoryServiceServer).BroadcastEvent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ServiceDirectory_BroadcastEvent_FullMethodName,
+		FullMethod: DirectoryService_BroadcastEvent_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServiceDirectoryServer).BroadcastEvent(ctx, req.(*EventInfo))
+		return srv.(DirectoryServiceServer).BroadcastEvent(ctx, req.(*EventInfo))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// ServiceDirectory_ServiceDesc is the grpc.ServiceDesc for ServiceDirectory service.
+// DirectoryService_ServiceDesc is the grpc.ServiceDesc for DirectoryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var ServiceDirectory_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "proto.ServiceDirectory",
-	HandlerType: (*ServiceDirectoryServer)(nil),
+var DirectoryService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "proto.DirectoryService",
+	HandlerType: (*DirectoryServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetService",
-			Handler:    _ServiceDirectory_GetService_Handler,
+			Handler:    _DirectoryService_GetService_Handler,
 		},
 		{
 			MethodName: "ListService",
-			Handler:    _ServiceDirectory_ListService_Handler,
+			Handler:    _DirectoryService_ListService_Handler,
 		},
 		{
 			MethodName: "AddService",
-			Handler:    _ServiceDirectory_AddService_Handler,
+			Handler:    _DirectoryService_AddService_Handler,
 		},
 		{
 			MethodName: "RemoveService",
-			Handler:    _ServiceDirectory_RemoveService_Handler,
+			Handler:    _DirectoryService_RemoveService_Handler,
 		},
 		{
 			MethodName: "BroadcastEvent",
-			Handler:    _ServiceDirectory_BroadcastEvent_Handler,
+			Handler:    _DirectoryService_BroadcastEvent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -52,7 +52,7 @@ func invokeCommand(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
 
-	out, err := proto.NewCommandControllerClient(conn).SendCommand(ctx, &proto.CommandArgument{
+	out, err := proto.NewCommandProviderClient(conn).SendCommand(ctx, &proto.CommandArgument{
 		Command: command,
 		Method:  method,
 		Payload: c.Body(),

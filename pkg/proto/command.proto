@@ -4,7 +4,7 @@ option go_package = ".;proto";
 
 package proto;
 
-service CommandController {
+service CommandProvider {
   rpc AddCommand(CommandInfo) returns (AddCommandResponse) {}
   rpc RemoveCommand(CommandLookupRequest) returns (RemoveCommandResponse) {}
   rpc SendCommand(CommandArgument) returns (CommandReturn) {}

@@ -13,7 +13,7 @@ func (v *CrudConn) AllocDatabase(name string) (string, error) {
 	conn := v.Conn.GetNexusGrpcConn()
 	ctx := context.Background()
 	ctx = metadata.AppendToOutgoingContext(ctx, "client_id", v.Conn.Info.Id)
-	out, err := proto.NewDatabaseControllerClient(conn).AllocDatabase(ctx, &proto.AllocDatabaseRequest{
+	out, err := proto.NewDatabaseServiceClient(conn).AllocDatabase(ctx, &proto.AllocDatabaseRequest{
 		Name: name,
 	})
 	if err != nil || !out.GetIsSuccess() {
