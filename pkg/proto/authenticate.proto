@@ -14,20 +14,17 @@ service AuthService {
 message UserInfo {
   uint64 id = 1;
   string name = 2;
-  optional bytes metadata = 3;
+  optional bytes perm_nodes = 3;
+  optional bytes metadata = 4;
 }
 
 message AuthInfo {
   UserInfo info = 1;
-  bytes perm_nodes = 2;
   uint64 session_id = 3;
-  optional string new_access_token = 4;
-  optional string new_refresh_token = 5;
 }
 
 message AuthRequest {
-  string access_token = 1;
-  optional string refresh_token = 2;
+  uint64 session_id = 1;
 }
 
 message AuthReply {

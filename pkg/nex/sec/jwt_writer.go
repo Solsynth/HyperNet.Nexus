@@ -14,12 +14,12 @@ type JwtWriter struct {
 }
 
 func NewJwtWriter(fp string) (*JwtWriter, error) {
-	rawPk, err := os.ReadFile(fp)
+	rawKey, err := os.ReadFile(fp)
 	if err != nil {
 		return nil, err
 	}
 
-	block, _ := pem.Decode(rawPk)
+	block, _ := pem.Decode(rawKey)
 	if block == nil || block.Type != "PRIVATE KEY" {
 		return nil, fmt.Errorf("failed to decode PEM block containing private key")
 	}
@@ -41,9 +41,5 @@ func NewJwtWriter(fp string) (*JwtWriter, error) {
 
 func WriteJwt[T jwt.Claims](v *JwtWriter, in T) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, in)
-	ss, err := token.SignedString(v.key)
-	if err != nil {
-		return "", err
-	}
-	return ss, nil
+	return token.SignedString(v.key)
 }

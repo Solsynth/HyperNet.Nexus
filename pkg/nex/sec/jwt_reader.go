@@ -14,12 +14,12 @@ type JwtReader struct {
 }
 
 func NewJwtReader(fp string) (*JwtReader, error) {
-	privateKeyBytes, err := os.ReadFile(fp)
+	rawKey, err := os.ReadFile(fp)
 	if err != nil {
 		return nil, err
 	}
 
-	block, _ := pem.Decode(privateKeyBytes)
+	block, _ := pem.Decode(rawKey)
 	if block == nil || block.Type != "PUBLIC KEY" {
 		return nil, fmt.Errorf("failed to decode PEM block containing private key")
 	}

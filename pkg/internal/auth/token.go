@@ -8,6 +8,9 @@ import (
 
 var JReader *sec.JwtReader
 
+var IReader *sec.InternalTokenReader
+var IWriter *sec.InternalTokenWriter
+
 func tokenExtract(c *fiber.Ctx) string {
 	var atk string
 	if cookie := c.Cookies(sec.CookieAccessToken); len(cookie) > 0 {

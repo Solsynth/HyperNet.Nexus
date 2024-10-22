@@ -80,6 +80,19 @@ func main() {
 		log.Info().Msg("Jwt public key loaded.")
 	}
 
+	if reader, err := sec.NewInternalTokenReader(viper.GetString("security.internal_public_key")); err != nil {
+		log.Error().Err(err).Msg("An error occurred when reading internal public key for jwt. Authentication related features will be disabled.")
+	} else {
+		auth.IReader = reader
+		log.Info().Msg("Internal jwt public key loaded.")
+	}
+	if writer, err := sec.NewInternalTokenWriter(viper.GetString("security.internal_private_key")); err != nil {
+		log.Error().Err(err).Msg("An error occurred when reading internal private key for jwt. Authentication related features will be disabled.")
+	} else {
+		auth.IWriter = writer
+		log.Info().Msg("Internal jwt private key loaded.")
+	}
+
 	// Server
 	go server.NewServer().Listen()
 

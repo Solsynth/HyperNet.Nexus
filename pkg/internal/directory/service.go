@@ -21,7 +21,7 @@ func (v *ServiceInstance) GetGrpcConn() (*grpc.ClientConn, error) {
 	var err error
 	v.grpcConn, err = ConnectService(v)
 	if err != nil {
-		RemoveServiceInstance(v.ID)
+		_ = RemoveServiceInstance(v.ID)
 		return nil, err
 	}
 
