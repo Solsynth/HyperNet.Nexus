@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/proxy"
@@ -28,6 +29,12 @@ func forwardService(c *fiber.Ctx) error {
 	url := c.OriginalURL()
 	url = strings.Replace(url, "/cgi/"+ogKeyword, "", 1)
 	url = *service.HttpAddr + url
+
+	if tk, ok := c.Locals("nex_token").(string); ok {
+		c.Set(fiber.HeaderAuthorization, fmt.Sprintf("Bearer %s", tk))
+	} else {
+		c.Set(fiber.HeaderAuthorization, "")
+	}
 
 	log.Debug().
 		Str("from", ogUrl).

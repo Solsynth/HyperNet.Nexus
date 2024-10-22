@@ -1,8 +1,8 @@
 package ws
 
 import (
-	"git.solsynth.dev/hypernet/nexus/pkg/internal/models"
 	"git.solsynth.dev/hypernet/nexus/pkg/nex"
+	"git.solsynth.dev/hypernet/nexus/pkg/nex/sec"
 	"github.com/gofiber/contrib/websocket"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/rs/zerolog/log"
@@ -10,7 +10,7 @@ import (
 )
 
 func Listen(c *websocket.Conn) {
-	user := c.Locals("user").(models.Account)
+	user := c.Locals("nex_user").(sec.UserInfo)
 
 	// Push connection
 	clientId := ClientRegister(user, c)

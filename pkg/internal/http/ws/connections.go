@@ -2,10 +2,10 @@ package ws
 
 import (
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
+	"git.solsynth.dev/hypernet/nexus/pkg/nex/sec"
 	"math/rand"
 	"sync"
 
-	"git.solsynth.dev/hypernet/nexus/pkg/internal/models"
 	"github.com/gofiber/contrib/websocket"
 )
 
@@ -14,7 +14,7 @@ var (
 	wsConn  = make(map[uint]map[uint64]*websocket.Conn)
 )
 
-func ClientRegister(user models.Account, conn *websocket.Conn) uint64 {
+func ClientRegister(user sec.UserInfo, conn *websocket.Conn) uint64 {
 	wsMutex.Lock()
 	if wsConn[user.ID] == nil {
 		wsConn[user.ID] = make(map[uint64]*websocket.Conn)
@@ -31,7 +31,7 @@ func ClientRegister(user models.Account, conn *websocket.Conn) uint64 {
 	return clientId
 }
 
-func ClientUnregister(user models.Account, id uint64) {
+func ClientUnregister(user sec.UserInfo, id uint64) {
 	wsMutex.Lock()
 	if wsConn[user.ID] == nil {
 		wsConn[user.ID] = make(map[uint64]*websocket.Conn)

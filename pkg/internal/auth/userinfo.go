@@ -33,6 +33,7 @@ func userinfoFetch(c *fiber.Ctx) error {
 				return fiber.NewError(fiber.StatusUnauthorized, fmt.Sprintf("unable to load userinfo: %v", err))
 			}
 			userinfo := sec.NewUserInfoFromProto(resp.Info.Info)
+			c.Locals("nex_user", userinfo)
 			tk, err := IWriter.WriteUserInfoJwt(userinfo)
 			if err != nil {
 				return fiber.NewError(fiber.StatusInternalServerError, fmt.Sprintf("unable to sign userinfo: %v", err))
