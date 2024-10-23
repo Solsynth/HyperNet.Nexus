@@ -12,7 +12,7 @@ import (
 )
 
 type InternalTokenWriter struct {
-	pk *ed25519.PrivateKey
+	pk ed25519.PrivateKey
 }
 
 func NewInternalTokenWriter(fp string) (*InternalTokenWriter, error) {
@@ -31,7 +31,7 @@ func NewInternalTokenWriter(fp string) (*InternalTokenWriter, error) {
 		return nil, err
 	}
 
-	pk, ok := anyPk.(*ed25519.PrivateKey)
+	pk, ok := anyPk.(ed25519.PrivateKey)
 	if !ok {
 		return nil, fmt.Errorf("not an Ed25519 private key")
 	}
@@ -56,7 +56,7 @@ func (v *InternalTokenWriter) WriteUserInfoJwt(in UserInfo, audiences ...string)
 }
 
 type InternalTokenReader struct {
-	pk *ed25519.PublicKey
+	pk ed25519.PublicKey
 }
 
 func NewInternalTokenReader(fp string) (*InternalTokenReader, error) {
@@ -75,7 +75,7 @@ func NewInternalTokenReader(fp string) (*InternalTokenReader, error) {
 		return nil, err
 	}
 
-	pk, ok := anyPk.(*ed25519.PublicKey)
+	pk, ok := anyPk.(ed25519.PublicKey)
 	if !ok {
 		return nil, fmt.Errorf("not an Ed25519 public key")
 	}
