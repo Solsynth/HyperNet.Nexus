@@ -33,7 +33,7 @@ message AuthReply {
 }
 
 message CheckPermRequest {
-  string token = 1;
+  uint64 session_id = 1;
   string key = 2;
   bytes value = 3;
 }
