@@ -15,7 +15,7 @@ func AddModel[T any](v *CrudConn, model T, id, prefix string, tags []string) err
 	funcCmds := []string{".list", "", "", "", ""}
 	funcMethods := []string{"get", "get", "put", "patch", "delete"}
 	for idx, fn := range funcList {
-		if err := v.Conn.AddCommand(prefix+id+funcCmds[idx], funcMethods[idx], tags, fn(v)); err != nil {
+		if err := v.n.AddCommand(prefix+id+funcCmds[idx], funcMethods[idx], tags, fn(v)); err != nil {
 			return err
 		}
 	}
@@ -31,12 +31,12 @@ func cmdList[T any](c *CrudConn) nex.CommandHandler {
 
 		var str T
 		var count int64
-		if err := c.db.Model(str).Count(&count).Error; err != nil {
+		if err := c.Db.Model(str).Count(&count).Error; err != nil {
 			return err
 		}
 
 		var out []T
-		if err := c.db.Offset(skip).Limit(take).Find(&out).Error; err != nil {
+		if err := c.Db.Offset(skip).Limit(take).Find(&out).Error; err != nil {
 			return err
 		}
 
@@ -55,7 +55,7 @@ func cmdGet[T any](c *CrudConn) nex.CommandHandler {
 		}
 
 		var out T
-		if err := c.db.First(&out, "id = ?", id).Error; err != nil {
+		if err := c.Db.First(&out, "id = ?", id).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return ctx.Write([]byte(err.Error()), "text/plain", http.StatusNotFound)
 			}
@@ -75,7 +75,7 @@ func cmdCreate[T any](c *CrudConn) nex.CommandHandler {
 			return ctx.Write([]byte(err.Error()), "text/plain+error", http.StatusBadRequest)
 		}
 
-		if err := c.db.Create(&payload).Error; err != nil {
+		if err := c.Db.Create(&payload).Error; err != nil {
 			return err
 		}
 
@@ -98,11 +98,11 @@ func cmdUpdate[T any](c *CrudConn) nex.CommandHandler {
 		}
 
 		var out T
-		if err := c.db.Model(out).Where("id = ?", id).Updates(&payload).Error; err != nil {
+		if err := c.Db.Model(out).Where("id = ?", id).Updates(&payload).Error; err != nil {
 			return err
 		}
 
-		if err := c.db.First(&out, "id = ?", id).Error; err != nil {
+		if err := c.Db.First(&out, "id = ?", id).Error; err != nil {
 			return err
 		}
 
@@ -118,7 +118,7 @@ func cmdDelete[T any](c *CrudConn) nex.CommandHandler {
 		}
 
 		var out T
-		if err := c.db.Delete(&out, "id = ?", id).Error; err != nil {
+		if err := c.Db.Delete(&out, "id = ?", id).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return ctx.Write([]byte(err.Error()), "text/plain", http.StatusNotFound)
 			}

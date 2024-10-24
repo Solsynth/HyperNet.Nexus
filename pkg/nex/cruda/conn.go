@@ -6,13 +6,13 @@ import (
 )
 
 type CrudConn struct {
-	Conn *nex.Conn
+	n *nex.Conn
 
-	db *gorm.DB
+	Db *gorm.DB
 }
 
 func NewCrudaConn(conn *nex.Conn) *CrudConn {
 	return &CrudConn{
-		Conn: conn,
+		n: conn,
 	}
 }

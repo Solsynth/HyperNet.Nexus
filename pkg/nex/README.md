@@ -13,3 +13,7 @@ Cruda will help you to build a simplified database access layer based on the com
 ### Nex.Sec
 
 The security part of nexus, including signing and validating the tokens and much more.
+
+### Nex.Rx
+
+The reactive part of nexus, such as streaming events, and message queues stuff.

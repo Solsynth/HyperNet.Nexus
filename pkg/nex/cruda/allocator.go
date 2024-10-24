@@ -10,9 +10,9 @@ import (
 )
 
 func (v *CrudConn) AllocDatabase(name string) (string, error) {
-	conn := v.Conn.GetNexusGrpcConn()
+	conn := v.n.GetNexusGrpcConn()
 	ctx := context.Background()
-	ctx = metadata.AppendToOutgoingContext(ctx, "client_id", v.Conn.Info.Id)
+	ctx = metadata.AppendToOutgoingContext(ctx, "client_id", v.n.Info.Id)
 	out, err := proto.NewDatabaseServiceClient(conn).AllocDatabase(ctx, &proto.AllocDatabaseRequest{
 		Name: name,
 	})
@@ -24,13 +24,13 @@ func (v *CrudConn) AllocDatabase(name string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	v.db = db
+	v.Db = db
 	return dsn, nil
 }
 
 func MigrateModel[T any](v *CrudConn, model T) error {
-	if v.db == nil {
+	if v.Db == nil {
 		return fmt.Errorf("database has not been allocated")
 	}
-	return v.db.AutoMigrate(model)
+	return v.Db.AutoMigrate(model)
 }
