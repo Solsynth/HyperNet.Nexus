@@ -66,6 +66,8 @@ func (v *ServiceRpcServer) AddService(ctx context.Context, info *proto.ServiceIn
 
 	if info.GetId() != clientId {
 		return nil, status.Errorf(codes.InvalidArgument, "client_id mismatch in metadata")
+	} else if len(clientId) == 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "client_id must not be blank")
 	}
 
 	in := &ServiceInstance{

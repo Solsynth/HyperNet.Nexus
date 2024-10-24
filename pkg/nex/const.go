@@ -1,5 +1,6 @@
 package nex
 
 const (
-	ServiceTypeAuth = "id"
+	ServiceTypeAuth   = "id"
+	ServiceTypePusher = "pusher"
 )
