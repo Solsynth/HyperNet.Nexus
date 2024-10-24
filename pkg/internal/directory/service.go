@@ -1,6 +1,9 @@
 package directory
 
-import "google.golang.org/grpc"
+import (
+	"github.com/rs/zerolog/log"
+	"google.golang.org/grpc"
+)
 
 type ServiceInstance struct {
 	ID       string  `json:"id"`
@@ -9,21 +12,24 @@ type ServiceInstance struct {
 	GrpcAddr string  `json:"grpc_addr"`
 	HttpAddr *string `json:"http_addr"`
 
-	grpcConn   *grpc.ClientConn
 	retryCount int
 }
 
+var connectionCache = make(map[string]*grpc.ClientConn)
+
 func (v *ServiceInstance) GetGrpcConn() (*grpc.ClientConn, error) {
-	if v.grpcConn != nil {
-		return v.grpcConn, nil
+	if conn, ok := connectionCache[v.ID]; ok {
+		return conn, nil
 	}
 
-	var err error
-	v.grpcConn, err = ConnectService(v)
+	conn, err := ConnectService(v)
 	if err != nil {
 		_ = RemoveServiceInstance(v.ID)
+		log.Error().Str("id", v.ID).Err(err).Msg("Failed to connect to service, dropped...")
 		return nil, err
+	} else {
+		connectionCache[v.ID] = conn
 	}
 
-	return v.grpcConn, nil
+	return conn, nil
 }

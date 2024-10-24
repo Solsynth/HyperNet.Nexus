@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/auth"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/database"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/http"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/kv"
 	"git.solsynth.dev/hypernet/nexus/pkg/nex/sec"
@@ -92,6 +93,9 @@ func main() {
 		auth.IWriter = writer
 		log.Info().Msg("Internal jwt private key loaded.")
 	}
+
+	// Post-boot actions
+	directory.ValidateServices()
 
 	// Server
 	go server.NewServer().Listen()
