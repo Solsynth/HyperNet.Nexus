@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option go_package = ".;proto";
+
+package proto;
+
+service AllocatorService {
+  rpc AllocMessageQueue(AllocMqRequest) returns (AllocMqResponse) {}
+  rpc AllocKv(AllocKvRequest) returns (AllocKvResponse) {}
+}
+
+message AllocMqRequest {
+}
+
+message AllocMqResponse {
+  bool is_success = 1;
+  string addr = 2;
+}
+
+message AllocKvRequest {
+}
+
+message AllocKvResponse {
+  bool is_success = 1;
+  repeated string endpoints = 2;
+}

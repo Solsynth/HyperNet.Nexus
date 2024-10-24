@@ -7,6 +7,7 @@ import (
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/http"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/kv"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/mq"
 	"git.solsynth.dev/hypernet/nexus/pkg/nex/sec"
 	"github.com/fatih/color"
 	"os"
@@ -56,6 +57,14 @@ func main() {
 		log.Fatal().Msg("Kv is required for service discovery and directory feature, cannot be disabled.")
 	} else {
 		log.Info().Msg("Connected to kv (etcd)!")
+	}
+
+	// Connect to message queue (nats)
+	log.Info().Msg("Connecting to MQ (nats)...")
+	if err := mq.ConnectNats(viper.GetString("mq.addr")); err != nil {
+		log.Error().Err(err).Msg("An error occurred when connecting to MQ (nats). MQ related feature will be disabled.")
+	} else {
+		log.Info().Msg("Connected to MQ (nats)!")
 	}
 
 	// Connect to database
