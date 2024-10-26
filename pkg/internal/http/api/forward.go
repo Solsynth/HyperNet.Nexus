@@ -5,7 +5,6 @@ import (
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/proxy"
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 	"strings"
 )
@@ -25,7 +24,6 @@ func forwardService(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusNotFound, "service not found")
 	}
 
-	ogUrl := c.Request().URI().String()
 	url := c.OriginalURL()
 	url = strings.Replace(url, "/cgi/"+ogKeyword, "", 1)
 	url = *service.HttpAddr + url
@@ -35,13 +33,6 @@ func forwardService(c *fiber.Ctx) error {
 	} else {
 		c.Set(fiber.HeaderAuthorization, "")
 	}
-
-	log.Debug().
-		Str("from", ogUrl).
-		Str("to", url).
-		Str("service", serviceType).
-		Str("id", service.ID).
-		Msg("Forwarding request for service...")
 
 	return proxy.Do(c, url)
 
