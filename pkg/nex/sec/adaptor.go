@@ -15,7 +15,7 @@ func ContextMiddleware(tkReader *InternalTokenReader) fiber.Handler {
 		token := c.Get(fiber.HeaderAuthorization)
 		token = strings.TrimSpace(strings.Replace(token, "Bearer ", "", 1))
 		if len(token) == 0 {
-			return fiber.NewError(fiber.StatusUnauthorized, "no authorization token is provided")
+			return c.Next()
 		}
 
 		data, err := tkReader.ReadUserInfoJwt(token)
@@ -28,7 +28,7 @@ func ContextMiddleware(tkReader *InternalTokenReader) fiber.Handler {
 	}
 }
 
-// ValidatorMiddleware will ensure request is authenticated
+// ValidatorMiddleware will ensure the request is authenticated
 // Make sure call this middleware after ContextMiddleware
 func ValidatorMiddleware(c *fiber.Ctx) error {
 	if c.Locals("nex_user") == nil {
