@@ -6,6 +6,10 @@ import (
 
 func ContextMiddleware(c *fiber.Ctx) error {
 	atk := tokenExtract(c)
+	if len(atk) == 0 {
+		return c.Next()
+	}
+
 	c.Locals("nex_in_token", atk)
 
 	if claims, err := tokenRead(atk); err == nil && claims != nil {

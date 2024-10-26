@@ -8,8 +8,6 @@ import (
 )
 
 func MapAPIs(app *fiber.App) {
-	app.Use(auth.ContextMiddleware)
-
 	// Some built-in public-accessible APIs
 	wellKnown := app.Group("/.well-known").Name("Well Known")
 	{
