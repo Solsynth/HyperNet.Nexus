@@ -19,7 +19,7 @@ func MapAPIs(app *fiber.App) {
 	}
 
 	// Common websocket gateway
-	app.Use(auth.ValidatorMiddleware).Get("/ws", websocket.New(ws.Listen))
+	app.Get("/ws", auth.ValidatorMiddleware, websocket.New(ws.Listen))
 
 	app.All("/inv/:command", invokeCommand)
 	app.All("/cgi/:service/*", forwardService)
