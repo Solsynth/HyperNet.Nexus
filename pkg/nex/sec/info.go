@@ -4,15 +4,16 @@ import (
 	"git.solsynth.dev/hypernet/nexus/pkg/nex"
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
 	"github.com/goccy/go-json"
+	"gorm.io/datatypes"
 )
 
 // UserInfo is the basic of userinfo, you can add anything above it.
 // Full data from id service was stored in the metadata field.
 type UserInfo struct {
-	ID        uint           `json:"id"`
-	Name      string         `json:"name"`
-	PermNodes map[string]any `json:"perm_nodes"`
-	Metadata  map[string]any `json:"metadata"`
+	ID        uint              `json:"id"`
+	Name      string            `json:"name"`
+	PermNodes datatypes.JSONMap `json:"perm_nodes" gorm:"-"`
+	Metadata  datatypes.JSONMap `json:"metadata"`
 }
 
 func NewUserInfoFromProto(in *proto.UserInfo) UserInfo {
