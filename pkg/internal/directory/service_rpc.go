@@ -99,3 +99,16 @@ func (v *ServiceRpcServer) RemoveService(ctx context.Context, request *proto.Rem
 		IsSuccess: err == nil,
 	}, nil
 }
+
+func (v *ServiceRpcServer) BroadcastEvent(ctx context.Context, in *proto.EventInfo) (*proto.EventResponse, error) {
+	services := ListServiceInstance()
+	for _, service := range services {
+		conn, err := service.GetGrpcConn()
+		if err != nil {
+			continue
+		}
+		_, _ = proto.NewDirectoryServiceClient(conn).BroadcastEvent(ctx, in)
+	}
+
+	return &proto.EventResponse{}, nil
+}
