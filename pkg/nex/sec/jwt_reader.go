@@ -39,8 +39,7 @@ func NewJwtReader(fp string) (*JwtReader, error) {
 	}, nil
 }
 
-func ReadJwt[T jwt.Claims](v *JwtReader, in string) (T, error) {
-	var out T
+func ReadJwt(v *JwtReader, in string, out jwt.Claims) (any, error) {
 	token, err := jwt.ParseWithClaims(in, out, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -53,9 +52,5 @@ func ReadJwt[T jwt.Claims](v *JwtReader, in string) (T, error) {
 		return out, fmt.Errorf("token is not valid")
 	}
 
-	if claims, ok := token.Claims.(T); ok {
-		return claims, nil
-	} else {
-		return out, err
-	}
+	return token.Claims, err
 }
