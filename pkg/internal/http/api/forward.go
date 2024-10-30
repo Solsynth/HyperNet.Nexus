@@ -29,9 +29,9 @@ func forwardService(c *fiber.Ctx) error {
 	url = *service.HttpAddr + url
 
 	if tk, ok := c.Locals("nex_token").(string); ok {
-		c.Set(fiber.HeaderAuthorization, fmt.Sprintf("Bearer %s", tk))
+		c.Request().Header.Set(fiber.HeaderAuthorization, fmt.Sprintf("Bearer %s", tk))
 	} else {
-		c.Set(fiber.HeaderAuthorization, "")
+		c.Request().Header.Del(fiber.HeaderAuthorization)
 	}
 
 	return proxy.Do(c, url)

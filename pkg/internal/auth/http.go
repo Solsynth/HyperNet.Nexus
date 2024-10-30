@@ -18,7 +18,7 @@ func ContextMiddleware(c *fiber.Ctx) error {
 			return err
 		}
 	} else if err != nil {
-		c.Locals("nex_auth_error", err)
+		return fiber.NewError(fiber.StatusUnauthorized, err.Error())
 	}
 
 	return c.Next()
@@ -26,11 +26,7 @@ func ContextMiddleware(c *fiber.Ctx) error {
 
 func ValidatorMiddleware(c *fiber.Ctx) error {
 	if c.Locals("nex_principal") == nil {
-		if err, ok := c.Locals("nex_auth_error").(error); ok {
-			return fiber.NewError(fiber.StatusUnauthorized, err.Error())
-		} else {
-			return fiber.NewError(fiber.StatusUnauthorized, "unauthorized")
-		}
+		return fiber.NewError(fiber.StatusUnauthorized, "unauthorized")
 	}
 
 	return c.Next()
