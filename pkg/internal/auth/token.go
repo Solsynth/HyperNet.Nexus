@@ -31,6 +31,6 @@ func tokenRead(in string) (*sec.JwtClaims, error) {
 		return nil, nil
 	}
 
-	claims, err := sec.ReadJwt[sec.JwtClaims](JReader, in)
-	return &claims, err
+	claims, err := sec.ReadJwt[*sec.JwtClaims](JReader, in, &sec.JwtClaims{})
+	return claims, err
 }

@@ -9,7 +9,7 @@ type JwtClaims struct {
 	jwt.RegisteredClaims
 
 	// Nexus Standard
-	Session  int           `json:"sed"`
+	Session  string        `json:"sed"`
 	CacheTTL time.Duration `json:"ttl,omitempty"`
 
 	// OIDC Standard

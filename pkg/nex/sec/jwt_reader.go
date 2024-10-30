@@ -39,6 +39,9 @@ func NewJwtReader(fp string) (*JwtReader, error) {
 	}, nil
 }
 
+// ReadJwt is the helper method to help me validate and parse jwt.
+// To use it, pass the initialized jwt reader which contains public key.
+// And pass the token string, and a pointer struct (you must initialize it, which it cannot be nil) of your claims
 func ReadJwt[T jwt.Claims](v *JwtReader, in string, out T) (T, error) {
 	token, err := jwt.ParseWithClaims(in, out, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {

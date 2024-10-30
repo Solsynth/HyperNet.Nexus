@@ -9,6 +9,7 @@ import (
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
+	"strconv"
 	"time"
 )
 
@@ -26,8 +27,12 @@ func userinfoFetch(c *fiber.Ctx) error {
 		} else {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
+			sed, err := strconv.Atoi(claims.Session)
+			if err != nil {
+				return fiber.NewError(fiber.StatusUnauthorized, fmt.Sprintf("invalid token payload"))
+			}
 			resp, err := proto.NewAuthServiceClient(conn).Authenticate(ctx, &proto.AuthRequest{
-				SessionId: uint64(claims.Session),
+				SessionId: uint64(sed),
 			})
 			if err != nil {
 				return fiber.NewError(fiber.StatusUnauthorized, fmt.Sprintf("unable to load userinfo: %v", err))
