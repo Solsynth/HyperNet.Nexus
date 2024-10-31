@@ -1,6 +1,7 @@
 package sec
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"strings"
 )
@@ -36,4 +37,23 @@ func ValidatorMiddleware(c *fiber.Ctx) error {
 	}
 
 	return c.Next()
+}
+
+func EnsureAuthenticated(c *fiber.Ctx) error {
+	if _, ok := c.Locals("nex_user").(*UserInfo); !ok {
+		return fiber.NewError(fiber.StatusUnauthorized)
+	}
+
+	return nil
+}
+
+func EnsureGrantedPerm(c *fiber.Ctx, key string, val any) error {
+	if err := EnsureAuthenticated(c); err != nil {
+		return err
+	}
+	info := c.Locals("nex_user").(*UserInfo)
+	if !info.HasPermNode(key, val) {
+		return fiber.NewError(fiber.StatusForbidden, fmt.Sprintf("missing permission: %s", key))
+	}
+	return nil
 }
