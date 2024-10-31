@@ -2,3 +2,5 @@
 /uploads
 /default.etcd
 /keys
+
+.DS_Store
