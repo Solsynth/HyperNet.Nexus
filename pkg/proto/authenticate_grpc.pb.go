@@ -22,7 +22,6 @@ const (
 	AuthService_Authenticate_FullMethodName          = "/proto.AuthService/Authenticate"
 	AuthService_EnsurePermGranted_FullMethodName     = "/proto.AuthService/EnsurePermGranted"
 	AuthService_EnsureUserPermGranted_FullMethodName = "/proto.AuthService/EnsureUserPermGranted"
-	AuthService_ListUserRelative_FullMethodName      = "/proto.AuthService/ListUserRelative"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -32,7 +31,6 @@ type AuthServiceClient interface {
 	Authenticate(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*AuthReply, error)
 	EnsurePermGranted(ctx context.Context, in *CheckPermRequest, opts ...grpc.CallOption) (*CheckPermResponse, error)
 	EnsureUserPermGranted(ctx context.Context, in *CheckUserPermRequest, opts ...grpc.CallOption) (*CheckUserPermResponse, error)
-	ListUserRelative(ctx context.Context, in *ListUserRelativeRequest, opts ...grpc.CallOption) (*ListUserRelativeResponse, error)
 }
 
 type authServiceClient struct {
@@ -73,16 +71,6 @@ func (c *authServiceClient) EnsureUserPermGranted(ctx context.Context, in *Check
 	return out, nil
 }
 
-func (c *authServiceClient) ListUserRelative(ctx context.Context, in *ListUserRelativeRequest, opts ...grpc.CallOption) (*ListUserRelativeResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListUserRelativeResponse)
-	err := c.cc.Invoke(ctx, AuthService_ListUserRelative_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
@@ -90,7 +78,6 @@ type AuthServiceServer interface {
 	Authenticate(context.Context, *AuthRequest) (*AuthReply, error)
 	EnsurePermGranted(context.Context, *CheckPermRequest) (*CheckPermResponse, error)
 	EnsureUserPermGranted(context.Context, *CheckUserPermRequest) (*CheckUserPermResponse, error)
-	ListUserRelative(context.Context, *ListUserRelativeRequest) (*ListUserRelativeResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -109,9 +96,6 @@ func (UnimplementedAuthServiceServer) EnsurePermGranted(context.Context, *CheckP
 }
 func (UnimplementedAuthServiceServer) EnsureUserPermGranted(context.Context, *CheckUserPermRequest) (*CheckUserPermResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EnsureUserPermGranted not implemented")
-}
-func (UnimplementedAuthServiceServer) ListUserRelative(context.Context, *ListUserRelativeRequest) (*ListUserRelativeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListUserRelative not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -188,24 +172,6 @@ func _AuthService_EnsureUserPermGranted_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_ListUserRelative_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListUserRelativeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AuthServiceServer).ListUserRelative(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AuthService_ListUserRelative_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).ListUserRelative(ctx, req.(*ListUserRelativeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -224,10 +190,6 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EnsureUserPermGranted",
 			Handler:    _AuthService_EnsureUserPermGranted_Handler,
-		},
-		{
-			MethodName: "ListUserRelative",
-			Handler:    _AuthService_ListUserRelative_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

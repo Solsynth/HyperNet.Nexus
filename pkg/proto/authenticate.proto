@@ -1,4 +1,5 @@
 syntax = "proto3";
+import "user.proto";
 
 option go_package = ".;proto";
 
@@ -8,14 +9,6 @@ service AuthService {
   rpc Authenticate(AuthRequest) returns (AuthReply) {}
   rpc EnsurePermGranted(CheckPermRequest) returns (CheckPermResponse) {}
   rpc EnsureUserPermGranted(CheckUserPermRequest) returns (CheckUserPermResponse) {}
-  rpc ListUserRelative(ListUserRelativeRequest) returns (ListUserRelativeResponse) {}
-}
-
-message UserInfo {
-  uint64 id = 1;
-  string name = 2;
-  optional bytes perm_nodes = 3;
-  optional bytes metadata = 4;
 }
 
 message AuthInfo {
@@ -51,14 +44,4 @@ message CheckUserPermRequest {
 
 message CheckUserPermResponse {
   bool is_valid = 1;
-}
-
-message ListUserRelativeRequest {
-  uint64 user_id = 1;
-  int32 status = 2;
-  bool is_related = 3;
-}
-
-message ListUserRelativeResponse {
-  repeated UserInfo data = 1;
 }
