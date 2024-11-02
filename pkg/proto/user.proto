@@ -22,7 +22,8 @@ message MultipleUserInfo {
 }
 
 message GetUserRequest {
-  uint64 user_id = 1;
+  optional uint64 user_id = 1;
+  optional string name = 2;
 }
 
 message ListUserRequest {
