@@ -3,7 +3,6 @@ package directory
 import (
 	"context"
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"io"
@@ -15,7 +14,7 @@ type CommandRpcServer struct {
 	proto.UnimplementedCommandProviderServer
 }
 
-func (c CommandRpcServer) AddCommand(ctx context.Context, info *proto.CommandInfo) (*proto.AddCommandResponse, error) {
+func (c *CommandRpcServer) AddCommand(ctx context.Context, info *proto.CommandInfo) (*proto.AddCommandResponse, error) {
 	clientId, err := GetClientId(ctx)
 	if err != nil {
 		return nil, err
@@ -32,14 +31,14 @@ func (c CommandRpcServer) AddCommand(ctx context.Context, info *proto.CommandInf
 	}, nil
 }
 
-func (c CommandRpcServer) RemoveCommand(ctx context.Context, request *proto.CommandLookupRequest) (*proto.RemoveCommandResponse, error) {
+func (c *CommandRpcServer) RemoveCommand(ctx context.Context, request *proto.CommandLookupRequest) (*proto.RemoveCommandResponse, error) {
 	RemoveCommand(request.GetId(), request.GetMethod())
 	return &proto.RemoveCommandResponse{
 		IsSuccess: true,
 	}, nil
 }
 
-func (c CommandRpcServer) SendCommand(ctx context.Context, argument *proto.CommandArgument) (*proto.CommandReturn, error) {
+func (c *CommandRpcServer) SendCommand(ctx context.Context, argument *proto.CommandArgument) (*proto.CommandReturn, error) {
 	id := argument.GetCommand()
 	method := argument.GetMethod()
 
@@ -79,7 +78,7 @@ func (c CommandRpcServer) SendCommand(ctx context.Context, argument *proto.Comma
 	return out, nil
 }
 
-func (c CommandRpcServer) SendStreamCommand(g grpc.BidiStreamingServer[proto.CommandArgument, proto.CommandReturn]) error {
+func (c *CommandRpcServer) SendStreamCommand(g proto.CommandProvider_SendStreamCommandServer) error {
 	for {
 		pck, err := g.Recv()
 		if err == io.EOF {
