@@ -104,7 +104,7 @@ func main() {
 	}
 
 	// Post-boot actions
-	directory.ValidateServices()
+	go directory.ValidateServices()
 
 	// Server
 	go server.NewServer().Listen()

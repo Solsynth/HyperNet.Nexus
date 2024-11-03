@@ -1,14 +1,16 @@
 package nex
 
-import jsoniter "github.com/json-iterator/go"
+import (
+	"github.com/goccy/go-json"
+)
 
 func EncodeMap(data any) []byte {
-	raw, _ := jsoniter.Marshal(data)
+	raw, _ := json.Marshal(data)
 	return raw
 }
 
 func DecodeMap(raw []byte) map[string]any {
 	var out map[string]any
-	_ = jsoniter.Unmarshal(raw, &out)
+	_ = json.Unmarshal(raw, &out)
 	return out
 }
