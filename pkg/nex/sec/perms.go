@@ -44,7 +44,7 @@ func comparePermNode(held any, required any) bool {
 
 	if isNumeric(requiredValue) && heldValue.Kind() == reflect.String {
 		numericValue, _ := strconv.ParseFloat(heldValue.String(), 64)
-		return toFloat64(requiredValue) >= numericValue
+		return numericValue >= toFloat64(requiredValue)
 	}
 
 	switch heldValue.Kind() {
