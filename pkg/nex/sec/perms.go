@@ -3,6 +3,7 @@ package sec
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 )
 
 func (v UserInfo) HasPermNode(requiredKey string, requiredValue any) bool {
@@ -40,6 +41,11 @@ func comparePermNode(held any, required any) bool {
 
 	heldValue := reflect.ValueOf(held)
 	requiredValue := reflect.ValueOf(required)
+
+	if isNumeric(requiredValue) && heldValue.Kind() == reflect.String {
+		numericValue, _ := strconv.ParseFloat(heldValue.String(), 64)
+		return toFloat64(requiredValue) >= numericValue
+	}
 
 	switch heldValue.Kind() {
 	case reflect.String:
