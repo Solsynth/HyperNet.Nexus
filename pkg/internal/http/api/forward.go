@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/proxy"
 	"github.com/spf13/viper"
+	"github.com/valyala/fasthttp"
 	"strings"
 )
 
@@ -34,6 +35,9 @@ func forwardService(c *fiber.Ctx) error {
 		c.Request().Header.Del(fiber.HeaderAuthorization)
 	}
 
-	return proxy.Do(c, url)
-
+	return proxy.Do(c, url, &fasthttp.Client{
+		NoDefaultUserAgentHeader: true,
+		DisablePathNormalizing:   true,
+		StreamResponseBody:       true,
+	})
 }

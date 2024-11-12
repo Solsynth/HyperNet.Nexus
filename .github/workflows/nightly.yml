@@ -25,4 +25,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: xsheep2010/dealer:nightly
+          tags: xsheep2010/nexus:nightly
