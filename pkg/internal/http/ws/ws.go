@@ -9,7 +9,6 @@ import (
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
 	"github.com/gofiber/contrib/websocket"
 	jsoniter "github.com/json-iterator/go"
-	"github.com/rs/zerolog/log"
 	"github.com/samber/lo"
 	"github.com/spf13/viper"
 )
@@ -19,10 +18,6 @@ func Listen(c *websocket.Conn) {
 
 	// Push connection
 	clientId := ClientRegister(user, c)
-	log.Debug().
-		Uint("user", user.ID).
-		Uint64("clientId", clientId).
-		Msg("New websocket connection established...")
 
 	// Event loop
 	var mt int
@@ -81,8 +76,4 @@ func Listen(c *websocket.Conn) {
 
 	// Pop connection
 	ClientUnregister(user, clientId)
-	log.Debug().
-		Uint("user", user.ID).
-		Uint64("clientId", clientId).
-		Msg("A websocket connection disconnected...")
 }
