@@ -39,7 +39,7 @@ func ClientUnregister(user sec.UserInfo, id uint64) {
 	delete(wsConn[user.ID], id)
 	wsMutex.Unlock()
 
-	directory.BroadcastEvent("ws.client.unregister", map[string]any{
+	_ = directory.BroadcastEvent("ws.client.unregister", map[string]any{
 		"user": user.ID,
 		"id":   id,
 	})

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/http/ws"
+	"github.com/rs/zerolog/log"
 
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
 	"github.com/samber/lo"
@@ -27,6 +28,11 @@ func (v *Server) PushStream(ctx context.Context, request *proto.PushStreamReques
 	} else {
 		return nil, fmt.Errorf("you must give one of the user id or client id")
 	}
+
+	log.Debug().
+		Uint64("client_id", request.GetClientId()).
+		Uint64("user_id", request.GetUserId()).
+		Msgf("Pushing a websocket package to client / user...")
 
 	if len(errs) > 0 {
 		// Partial fail
