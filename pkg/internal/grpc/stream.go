@@ -32,7 +32,10 @@ func (v *Server) PushStream(ctx context.Context, request *proto.PushStreamReques
 	log.Debug().
 		Uint64("client_id", request.GetClientId()).
 		Uint64("user_id", request.GetUserId()).
-		Msgf("Pushing a websocket package to client / user...")
+		Int("count", cnt).
+		Int("success", success).
+		Int("failed", len(errs)).
+		Msgf("Pushed a websocket package to client / user...")
 
 	if len(errs) > 0 {
 		// Partial fail
@@ -71,6 +74,14 @@ func (v *Server) PushStreamBatch(ctx context.Context, request *proto.PushStreamB
 		success += cSuccess
 		errs = append(errs, cErrs...)
 	}
+
+	log.Debug().
+		Any("client_id", request.GetClientId()).
+		Any("user_id", request.GetUserId()).
+		Int("count", cnt).
+		Int("success", success).
+		Int("failed", len(errs)).
+		Msgf("Pushed a websocket package to client / user...")
 
 	if len(errs) > 0 {
 		// Partial fail

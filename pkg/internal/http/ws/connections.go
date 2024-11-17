@@ -3,6 +3,7 @@ package ws
 import (
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
 	"git.solsynth.dev/hypernet/nexus/pkg/nex/sec"
+	"github.com/rs/zerolog/log"
 	"math/rand"
 	"sync"
 
@@ -23,7 +24,12 @@ func ClientRegister(user sec.UserInfo, conn *websocket.Conn) uint64 {
 	wsConn[user.ID][clientId] = conn
 	wsMutex.Unlock()
 
-	directory.BroadcastEvent("ws.client.register", map[string]any{
+	log.Debug().
+		Uint64("client_id", clientId).
+		Uint("user_id", user.ID).
+		Msg("An client connected to stream endpoint...")
+
+	_ = directory.BroadcastEvent("ws.client.register", map[string]any{
 		"user": user.ID,
 		"id":   clientId,
 	})
@@ -38,6 +44,11 @@ func ClientUnregister(user sec.UserInfo, id uint64) {
 	}
 	delete(wsConn[user.ID], id)
 	wsMutex.Unlock()
+
+	log.Debug().
+		Uint64("client_id", id).
+		Uint("user_id", user.ID).
+		Msg("An client disconnected from stream endpoint...")
 
 	_ = directory.BroadcastEvent("ws.client.unregister", map[string]any{
 		"user": user.ID,
