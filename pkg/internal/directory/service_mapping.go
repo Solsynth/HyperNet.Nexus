@@ -6,6 +6,7 @@ import (
 	"git.solsynth.dev/hypernet/nexus/pkg/nex"
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
 	"github.com/goccy/go-json"
+	"github.com/rs/zerolog/log"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"math/rand"
 	"time"
@@ -114,6 +115,11 @@ func BroadcastEvent(event string, data any) error {
 	if err != nil {
 		return err
 	}
+
+	log.Debug().
+		Int("destinations", len(resp.Kvs)).
+		Str("event", event).
+		Msg("Broadcasting event from internal...")
 
 	for _, val := range resp.Kvs {
 		var instance ServiceInstance

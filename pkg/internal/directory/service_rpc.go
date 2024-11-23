@@ -102,6 +102,10 @@ func (v *ServiceRpcServer) RemoveService(ctx context.Context, request *proto.Rem
 
 func (v *ServiceRpcServer) BroadcastEvent(ctx context.Context, in *proto.EventInfo) (*proto.EventResponse, error) {
 	services := ListServiceInstance()
+	log.Debug().
+		Int("destinations", len(services)).
+		Str("event", in.GetEvent()).
+		Msg("Broadcasting event...")
 	for _, service := range services {
 		conn, err := service.GetGrpcConn()
 		if err != nil {
