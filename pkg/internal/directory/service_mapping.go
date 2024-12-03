@@ -121,14 +121,18 @@ func BroadcastEvent(event string, data any) error {
 		Str("event", event).
 		Msg("Broadcasting event from internal...")
 
-	for _, val := range resp.Kvs {
+	for idx, val := range resp.Kvs {
 		var instance ServiceInstance
 		if err := json.Unmarshal(val.Value, &instance); err != nil {
+			log.Error().Err(err).Int("index", idx).
+				Msg("Unable to parse instance config, skip broadcasting for it...")
 			continue
 		}
 
 		conn, err := instance.GetGrpcConn()
 		if err != nil {
+			log.Error().Err(err).Str("destination", instance.ID).
+				Msg("Unable to get grpc connection, skip broadcasting for it...")
 			continue
 		}
 
