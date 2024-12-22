@@ -3,6 +3,7 @@ package ws
 import (
 	"context"
 	"fmt"
+
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
 	"git.solsynth.dev/hypernet/nexus/pkg/nex"
 	"git.solsynth.dev/hypernet/nexus/pkg/nex/sec"
@@ -14,7 +15,11 @@ import (
 )
 
 func Listen(c *websocket.Conn) {
-	user := c.Locals("nex_user").(sec.UserInfo)
+	user, ok := c.Locals("nex_user").(sec.UserInfo)
+	if !ok {
+		c.Close()
+		return
+	}
 
 	// Push connection
 	clientId := ClientRegister(user, c)
