@@ -1,7 +1,6 @@
 package directory
 
 import (
-	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 )
 
@@ -24,8 +23,6 @@ func (v *ServiceInstance) GetGrpcConn() (*grpc.ClientConn, error) {
 
 	conn, err := ConnectService(v)
 	if err != nil {
-		_ = RemoveServiceInstance(v.ID)
-		log.Error().Str("id", v.ID).Err(err).Msg("Failed to connect to service, dropped...")
 		return nil, err
 	} else {
 		connectionCache[v.ID] = conn
