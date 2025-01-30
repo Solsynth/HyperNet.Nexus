@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"os/user"
 	"path/filepath"
 	"strings"
 	"time"
@@ -32,8 +33,10 @@ func BackupDb() error {
 		fmt.Sprintf("watchtower_db_backup_%s", time.Now().Format("2006-01-02 15:04:05")),
 	)
 
+	// Reading config
+	var database string
 	var password string
-	var user string
+	var username string
 	var host string
 	var port string
 
@@ -42,25 +45,54 @@ func BackupDb() error {
 		if strings.HasPrefix(part, "password=") {
 			password = strings.Replace(part, "password=", "", 1)
 		} else if strings.HasPrefix(part, "user=") {
-			user = strings.Replace(part, "user=", "", 1)
+			username = strings.Replace(part, "user=", "", 1)
 		} else if strings.HasPrefix(part, "host=") {
 			host = strings.Replace(part, "host=", "", 1)
 		} else if strings.HasPrefix(part, "port=") {
 			port = strings.Replace(part, "port=", "", 1)
+		} else if strings.HasPrefix(part, "dbname=") {
+			database = strings.Replace(part, "dbname=", "", 1)
 		}
 	}
 
+	// Creating ~/.pgpass
+	usr, err := user.Current()
+	if err != nil {
+		return fmt.Errorf("unable to get current user: %v", err)
+	}
+
+	homeDir := usr.HomeDir
+	pgpassFile := filepath.Join(homeDir, ".pgpass")
+
+	pgpassString := fmt.Sprintf("%s:%s:%s:%s:%s\n", host, port, database, username, password)
+
+	// Open the .pgpass pgpass for writing (create if it doesn't exist)
+	pgpass, err := os.OpenFile(pgpassFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600) // Set file permissions to 0600
+	if err != nil {
+		log.Error().Err(err).Str("path", pgpassFile).Msg("Failed to open .pgpass file...")
+		return fmt.Errorf("failed to open .pgpass file: %v", err)
+	}
+
+	if _, err = pgpass.WriteString(pgpassString); err != nil {
+		log.Error().Err(err).Msg("Failed to write to .pgpass file...")
+		return fmt.Errorf("failed to write to .pgpass file: %v", err)
+	} else {
+		pgpass.Close()
+	}
+
+	log.Info().Msg("Wrote to .pgpass file...")
+
+	// Backing up
 	log.Info().
-		Str("password", password).Str("user", user).
+		Str("password", password).Str("user", username).
 		Str("host", host).Str("port", port).
 		Msg("Starting backup database...")
 
 	cmd := exec.Command("pg_dumpall",
 		"-h", host,
 		"-p", port,
-		"-U", user,
+		"-U", username,
 		"-f", outFile,
-		"-W",
 	)
 	cmd.Env = os.Environ()
 
@@ -68,38 +100,13 @@ func BackupDb() error {
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 
-	stdin, err := cmd.StdinPipe()
-	if err != nil {
-		return fmt.Errorf("failed to get dumpall stdin: %v", err)
-	}
-
 	start := time.Now()
-
-	if err := cmd.Start(); err != nil {
-		log.Error().
-			Err(err).Str("stdout", stdout.String()).Str("stderr", stderr.String()).
-			Msg("Failed to start backing up the database...")
-		return err
-	}
-	if _, err = stdin.Write([]byte(password + "\n")); err != nil {
-		log.Error().
-			Err(err).Str("stdout", stdout.String()).Str("stderr", stderr.String()).
-			Msg("Failed to passing the password for backuping up the database...")
-		return err
-	}
-	if err = stdin.Close(); err != nil {
-		log.Error().
-			Err(err).Str("stdout", stdout.String()).Str("stderr", stderr.String()).
-			Msg("Failed to end backing up stdin...")
-		return err
-	}
-	if err = cmd.Wait(); err != nil {
+	if err := cmd.Run(); err != nil {
 		log.Error().
 			Err(err).Str("stdout", stdout.String()).Str("stderr", stderr.String()).
 			Msg("Failed to backup the database...")
 		return err
 	}
-
 	took := time.Since(start)
 
 	log.Info().
