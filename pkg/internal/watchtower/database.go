@@ -1,6 +1,7 @@
 package watchtower
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
@@ -59,14 +60,23 @@ func BackupDb() error {
 		"PGPASSWORD=" + password,
 	}...)
 
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+
 	start := time.Now()
 	log.Info().Msg("Starting backup database...")
 	if err := cmd.Run(); err != nil {
-		log.Error().Err(err).Msg("Failed to backup the database...")
+		log.Error().
+			Err(err).Str("stdout", stdout.String()).Str("stderr", stderr.String()).
+			Msg("Failed to backup the database...")
 		return err
 	}
 	took := time.Since(start)
-	log.Info().Str("out", outFile).Dur("took", took).Msg("Backed up database successfully!")
+	log.Info().
+		Str("out", outFile).Dur("took", took).
+		Str("stdout", stdout.String()).Str("stderr", stderr.String()).
+		Msg("Backed up database successfully!")
 
 	return nil
 }
@@ -106,4 +116,3 @@ func RunDbMaintenance() {
 	}
 	CleanAllDb()
 }
-
