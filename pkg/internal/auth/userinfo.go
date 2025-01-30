@@ -3,14 +3,15 @@ package auth
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"time"
+
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
 	"git.solsynth.dev/hypernet/nexus/pkg/nex"
 	"git.solsynth.dev/hypernet/nexus/pkg/nex/sec"
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
-	"strconv"
-	"time"
 )
 
 func userinfoFetch(c *fiber.Ctx) error {
@@ -29,7 +30,7 @@ func userinfoFetch(c *fiber.Ctx) error {
 			defer cancel()
 			sed, err := strconv.Atoi(claims.Session)
 			if err != nil {
-				return fiber.NewError(fiber.StatusUnauthorized, fmt.Sprintf("invalid token payload"))
+				return fiber.NewError(fiber.StatusUnauthorized, "invalid token payload")
 			}
 			resp, err := proto.NewAuthServiceClient(conn).Authenticate(ctx, &proto.AuthRequest{
 				SessionId: uint64(sed),
@@ -38,7 +39,7 @@ func userinfoFetch(c *fiber.Ctx) error {
 				return fiber.NewError(fiber.StatusUnauthorized, fmt.Sprintf("unable to load userinfo: %v", err))
 			}
 			userinfo := sec.NewUserInfoFromProto(resp.Info.Info)
-			c.Locals("nex_user", userinfo)
+			c.Locals("nex_user", &userinfo)
 			tk, err := IWriter.WriteUserInfoJwt(userinfo)
 			if err != nil {
 				return fiber.NewError(fiber.StatusInternalServerError, fmt.Sprintf("unable to sign userinfo: %v", err))

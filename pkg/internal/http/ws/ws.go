@@ -15,14 +15,14 @@ import (
 )
 
 func Listen(c *websocket.Conn) {
-	user, ok := c.Locals("nex_user").(sec.UserInfo)
+	user, ok := c.Locals("nex_user").(*sec.UserInfo)
 	if !ok {
 		c.Close()
 		return
 	}
 
 	// Push connection
-	clientId := ClientRegister(user, c)
+	clientId := ClientRegister(*user, c)
 
 	// Event loop
 	var mt int
@@ -80,5 +80,5 @@ func Listen(c *websocket.Conn) {
 	}
 
 	// Pop connection
-	ClientUnregister(user, clientId)
+	ClientUnregister(*user, clientId)
 }
