@@ -34,7 +34,6 @@ func BackupDb() error {
 	)
 
 	// Reading config
-	var database string
 	var password string
 	var username string
 	var host string
@@ -50,8 +49,6 @@ func BackupDb() error {
 			host = strings.Replace(part, "host=", "", 1)
 		} else if strings.HasPrefix(part, "port=") {
 			port = strings.Replace(part, "port=", "", 1)
-		} else if strings.HasPrefix(part, "dbname=") {
-			database = strings.Replace(part, "dbname=", "", 1)
 		}
 	}
 
@@ -64,7 +61,7 @@ func BackupDb() error {
 	homeDir := usr.HomeDir
 	pgpassFile := filepath.Join(homeDir, ".pgpass")
 
-	pgpassString := fmt.Sprintf("%s:%s:%s:%s:%s\n", host, port, database, username, password)
+	pgpassString := fmt.Sprintf("%s:%s:%s:%s:%s\n", host, port, "*", username, password)
 
 	// Open the .pgpass pgpass for writing (create if it doesn't exist)
 	pgpass, err := os.OpenFile(pgpassFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600) // Set file permissions to 0600
@@ -93,6 +90,7 @@ func BackupDb() error {
 		"-p", port,
 		"-U", username,
 		"-f", outFile,
+		"-w",
 	)
 	cmd.Env = os.Environ()
 
