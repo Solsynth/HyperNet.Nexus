@@ -2,17 +2,19 @@ package main
 
 import (
 	"fmt"
-	"git.solsynth.dev/hypernet/nexus/pkg/internal/auth"
-	"git.solsynth.dev/hypernet/nexus/pkg/internal/database"
-	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
-	"git.solsynth.dev/hypernet/nexus/pkg/internal/http"
-	"git.solsynth.dev/hypernet/nexus/pkg/internal/kv"
-	"git.solsynth.dev/hypernet/nexus/pkg/internal/mq"
-	"git.solsynth.dev/hypernet/nexus/pkg/nex/sec"
-	"github.com/fatih/color"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/auth"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/database"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
+	server "git.solsynth.dev/hypernet/nexus/pkg/internal/http"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/kv"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/mq"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/watchtower"
+	"git.solsynth.dev/hypernet/nexus/pkg/nex/sec"
+	"github.com/fatih/color"
 
 	pkg "git.solsynth.dev/hypernet/nexus/pkg/internal"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/grpc"
@@ -114,6 +116,7 @@ func main() {
 
 	// Configure timed tasks
 	quartz := cron.New(cron.WithLogger(cron.VerbosePrintfLogger(&log.Logger)))
+	quartz.AddFunc("@midnight", watchtower.RunDbMaintenance)
 	quartz.Start()
 
 	// Messages

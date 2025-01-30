@@ -10,6 +10,8 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -buildvcs -o /dist ./pkg/main
 # Runtime
 FROM golang:alpine
 
+RUN apk add postgresql-client
+
 COPY --from=nexus-server /dist /nexus/server
 
 EXPOSE 8444

@@ -2,8 +2,6 @@ module git.solsynth.dev/hypernet/nexus
 
 go 1.22.0
 
-toolchain go1.23.2
-
 require (
 	github.com/fatih/color v1.18.0
 	github.com/go-playground/validator/v10 v10.22.1
@@ -18,6 +16,7 @@ require (
 	github.com/rs/zerolog v1.33.0
 	github.com/samber/lo v1.47.0
 	github.com/spf13/viper v1.19.0
+	github.com/valyala/fasthttp v1.57.0
 	go.etcd.io/etcd/client/v3 v3.5.16
 	google.golang.org/grpc v1.67.1
 	google.golang.org/protobuf v1.35.1
@@ -71,7 +70,6 @@ require (
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/tinylib/msgp v1.2.4 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.57.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	go.etcd.io/etcd/api/v3 v3.5.16 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.5.16 // indirect
@@ -89,5 +87,3 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.5.7 // indirect
 )
-
-replace git.solsynth.dev/hydrogen/bus => ../Bus

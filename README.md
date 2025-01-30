@@ -41,6 +41,8 @@ the establishment of the connection.
 At the same time, the allocated database will be added into the watchtower for auto maintenance
 (auto remove the soft-deleted records, backup and more).
 
+Currently, the database is only support postgres, there is no plan for supporting other databases.
+
 ### Authorization
 
 All the request forwarded by the Nexus will handle the authorization automatically.

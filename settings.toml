@@ -20,3 +20,6 @@ endpoints = ["localhost:2379"]
 public_key = "keys/public_key.pem"
 internal_public_key = "keys/internal_public_key.pem"
 internal_private_key = "keys/internal_private_key.pem"
+
+[watchtower]
+database_backups = "./backups"

@@ -2,9 +2,11 @@ package database
 
 import (
 	"fmt"
+	"strings"
+
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/watchtower"
 	"github.com/samber/lo"
 	"github.com/spf13/viper"
-	"strings"
 )
 
 func AllocDatabase(name string) (string, error) {
@@ -34,6 +36,9 @@ func AllocDatabase(name string) (string, error) {
 	}
 
 	connString = append(connString, "dbname="+name)
+	dsn := strings.Join(connString, " ")
 
-	return strings.Join(connString, " "), nil
+	watchtower.AddWatchDb(dsn)
+
+	return dsn, nil
 }
