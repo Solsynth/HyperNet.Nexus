@@ -41,6 +41,12 @@ func MapAPIs(app *fiber.App) {
 		})
 	}
 
+	// WatchTower administration APIs
+	wt := app.Group("/watchtower").Name("WatchTower").Use(auth.ValidatorMiddleware)
+	{
+		wt.Post("/maintenance/database", wtRunDbMaintenance)
+	}
+
 	// Common websocket gateway
 	app.Get("/ws", auth.ValidatorMiddleware, websocket.New(ws.Listen))
 
