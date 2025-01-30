@@ -42,7 +42,7 @@ func BackupDb() error {
 		if strings.HasPrefix(part, "password=") {
 			password = strings.Replace(part, "password=", "", 1)
 		} else if strings.HasPrefix(part, "user=") {
-			password = strings.Replace(part, "user=", "", 1)
+			user = strings.Replace(part, "user=", "", 1)
 		} else if strings.HasPrefix(part, "host=") {
 			host = strings.Replace(part, "host=", "", 1)
 		} else if strings.HasPrefix(part, "port=") {
@@ -50,29 +50,58 @@ func BackupDb() error {
 		}
 	}
 
+	log.Info().
+		Str("password", password).Str("user", user).
+		Str("host", host).Str("port", port).
+		Msg("Starting backup database...")
+
 	cmd := exec.Command("pg_dumpall",
 		"-h", host,
 		"-p", port,
 		"-U", user,
 		"-f", outFile,
+		"-W",
 	)
-	cmd.Env = append(os.Environ(), []string{
-		"PGPASSWORD=" + password,
-	}...)
+	cmd.Env = os.Environ()
 
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		return fmt.Errorf("failed to get dumpall stdin: %v", err)
+	}
+
 	start := time.Now()
-	log.Info().Msg("Starting backup database...")
-	if err := cmd.Run(); err != nil {
+
+	if err := cmd.Start(); err != nil {
+		log.Error().
+			Err(err).Str("stdout", stdout.String()).Str("stderr", stderr.String()).
+			Msg("Failed to start backing up the database...")
+		return err
+	}
+	if _, err = stdin.Write([]byte(password + "\n")); err != nil {
+		log.Error().
+			Err(err).Str("stdout", stdout.String()).Str("stderr", stderr.String()).
+			Msg("Failed to passing the password for backuping up the database...")
+		return err
+	}
+	if err = stdin.Close(); err != nil {
+		log.Error().
+			Err(err).Str("stdout", stdout.String()).Str("stderr", stderr.String()).
+			Msg("Failed to end backing up stdin...")
+		return err
+	}
+	if err = cmd.Wait(); err != nil {
 		log.Error().
 			Err(err).Str("stdout", stdout.String()).Str("stderr", stderr.String()).
 			Msg("Failed to backup the database...")
 		return err
 	}
+
 	took := time.Since(start)
+
 	log.Info().
 		Str("out", outFile).Dur("took", took).
 		Str("stdout", stdout.String()).Str("stderr", stderr.String()).
