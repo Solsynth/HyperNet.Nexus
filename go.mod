@@ -12,12 +12,14 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/lib/pq v1.10.9
 	github.com/nats-io/nats.go v1.37.0
+	github.com/nicksnyder/go-i18n/v2 v2.5.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/rs/zerolog v1.33.0
 	github.com/samber/lo v1.47.0
 	github.com/spf13/viper v1.19.0
 	github.com/valyala/fasthttp v1.57.0
 	go.etcd.io/etcd/client/v3 v3.5.16
+	golang.org/x/text v0.21.0
 	google.golang.org/grpc v1.67.1
 	google.golang.org/protobuf v1.35.1
 	gorm.io/datatypes v1.2.4
@@ -78,9 +80,8 @@ require (
 	golang.org/x/crypto v0.28.0 // indirect
 	golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c // indirect
 	golang.org/x/net v0.30.0 // indirect
-	golang.org/x/sync v0.8.0 // indirect
+	golang.org/x/sync v0.10.0 // indirect
 	golang.org/x/sys v0.26.0 // indirect
-	golang.org/x/text v0.19.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20241021214115-324edc3d5d38 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20241021214115-324edc3d5d38 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
