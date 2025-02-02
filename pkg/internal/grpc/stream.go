@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"fmt"
+
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/http/ws"
 	"github.com/rs/zerolog/log"
 
@@ -19,16 +20,17 @@ func (v *Server) CountStreamConnection(ctx context.Context, request *proto.Count
 
 func (v *Server) PushStream(ctx context.Context, request *proto.PushStreamRequest) (*proto.PushStreamResponse, error) {
 	var cnt int
-	var success int
+	var successes []uint64
 	var errs []error
 	if request.UserId != nil {
-		cnt, success, errs = ws.WebsocketPush(uint(request.GetUserId()), request.GetBody())
+		cnt, successes, errs = ws.WebsocketPush(uint(request.GetUserId()), request.GetBody())
 	} else if request.ClientId != nil {
-		cnt, success, errs = ws.WebsocketPushDirect(request.GetClientId(), request.GetBody())
+		cnt, successes, errs = ws.WebsocketPushDirect(request.GetClientId(), request.GetBody())
 	} else {
 		return nil, fmt.Errorf("you must give one of the user id or client id")
 	}
 
+	success := len(successes)
 	log.Debug().
 		Uint64("client_id", request.GetClientId()).
 		Uint64("user_id", request.GetUserId()).
@@ -43,6 +45,7 @@ func (v *Server) PushStream(ctx context.Context, request *proto.PushStreamReques
 			IsAllSuccess:  false,
 			AffectedCount: int64(success),
 			FailedCount:   int64(cnt - success),
+			SuccessList:   successes,
 		}, nil
 	} else if cnt > 0 && success == 0 {
 		// All fail
@@ -58,10 +61,10 @@ func (v *Server) PushStream(ctx context.Context, request *proto.PushStreamReques
 
 func (v *Server) PushStreamBatch(ctx context.Context, request *proto.PushStreamBatchRequest) (*proto.PushStreamResponse, error) {
 	var cnt int
-	var success int
+	var successes []uint64
 	var errs []error
 	if len(request.UserId) != 0 {
-		cnt, success, errs = ws.WebsocketPushBatch(
+		cnt, successes, errs = ws.WebsocketPushBatch(
 			lo.Map(request.GetUserId(), func(item uint64, idx int) uint {
 				return uint(item)
 			},
@@ -71,10 +74,11 @@ func (v *Server) PushStreamBatch(ctx context.Context, request *proto.PushStreamB
 	if len(request.ClientId) != 0 {
 		cCnt, cSuccess, cErrs := ws.WebsocketPushBatchDirect(request.GetClientId(), request.GetBody())
 		cnt += cCnt
-		success += cSuccess
+		successes = append(successes, cSuccess...)
 		errs = append(errs, cErrs...)
 	}
 
+	success := len(successes)
 	log.Debug().
 		Any("client_id", request.GetClientId()).
 		Any("user_id", request.GetUserId()).
@@ -99,5 +103,6 @@ func (v *Server) PushStreamBatch(ctx context.Context, request *proto.PushStreamB
 		IsAllSuccess:  true,
 		AffectedCount: int64(success),
 		FailedCount:   int64(cnt - success),
+		SuccessList:   successes,
 	}, nil
 }

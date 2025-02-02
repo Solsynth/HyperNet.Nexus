@@ -1,11 +1,12 @@
 package ws
 
 import (
+	"math/rand"
+	"sync"
+
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
 	"git.solsynth.dev/hypernet/nexus/pkg/nex/sec"
 	"github.com/rs/zerolog/log"
-	"math/rand"
-	"sync"
 
 	"github.com/gofiber/contrib/websocket"
 )
@@ -60,25 +61,25 @@ func ClientCount(uid uint) int {
 	return len(wsConn[uid])
 }
 
-func WebsocketPush(uid uint, body []byte) (count int, success int, errs []error) {
+func WebsocketPush(uid uint, body []byte) (count int, successes []uint64, errs []error) {
 	for _, conn := range wsConn[uid] {
 		if err := conn.WriteMessage(1, body); err != nil {
 			errs = append(errs, err)
 		} else {
-			success++
+			successes = append(successes, uint64(uid))
 		}
 		count++
 	}
 	return
 }
 
-func WebsocketPushDirect(clientId uint64, body []byte) (count int, success int, errs []error) {
+func WebsocketPushDirect(clientId uint64, body []byte) (count int, successes []uint64, errs []error) {
 	for _, m := range wsConn {
 		if conn, ok := m[clientId]; ok {
 			if err := conn.WriteMessage(1, body); err != nil {
 				errs = append(errs, err)
 			} else {
-				success++
+				successes = append(successes, clientId)
 			}
 			count++
 		}
@@ -86,13 +87,13 @@ func WebsocketPushDirect(clientId uint64, body []byte) (count int, success int, 
 	return
 }
 
-func WebsocketPushBatch(uidList []uint, body []byte) (count int, success int, errs []error) {
+func WebsocketPushBatch(uidList []uint, body []byte) (count int, successes []uint64, errs []error) {
 	for _, uid := range uidList {
 		for _, conn := range wsConn[uid] {
 			if err := conn.WriteMessage(1, body); err != nil {
 				errs = append(errs, err)
 			} else {
-				success++
+				successes = append(successes, uint64(uid))
 			}
 			count++
 		}
@@ -100,14 +101,14 @@ func WebsocketPushBatch(uidList []uint, body []byte) (count int, success int, er
 	return
 }
 
-func WebsocketPushBatchDirect(clientIdList []uint64, body []byte) (count int, success int, errs []error) {
+func WebsocketPushBatchDirect(clientIdList []uint64, body []byte) (count int, successes []uint64, errs []error) {
 	for _, clientId := range clientIdList {
 		for _, m := range wsConn {
 			if conn, ok := m[clientId]; ok {
 				if err := conn.WriteMessage(1, body); err != nil {
 					errs = append(errs, err)
 				} else {
-					success++
+					successes = append(successes, clientId)
 				}
 				count++
 			}
