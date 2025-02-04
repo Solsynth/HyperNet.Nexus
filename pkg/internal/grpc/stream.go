@@ -53,7 +53,7 @@ func (v *Server) PushStream(ctx context.Context, request *proto.PushStreamReques
 	}
 
 	return &proto.PushStreamResponse{
-		IsAllSuccess:  true,
+		IsAllSuccess:  cnt == success,
 		AffectedCount: int64(success),
 		FailedCount:   int64(cnt - success),
 	}, nil
@@ -100,7 +100,7 @@ func (v *Server) PushStreamBatch(ctx context.Context, request *proto.PushStreamB
 	}
 
 	return &proto.PushStreamResponse{
-		IsAllSuccess:  true,
+		IsAllSuccess:  cnt == success,
 		AffectedCount: int64(success),
 		FailedCount:   int64(cnt - success),
 		SuccessList:   successes,
