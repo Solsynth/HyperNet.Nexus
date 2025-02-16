@@ -13,6 +13,7 @@ service UserService {
 message UserInfo {
   uint64 id = 1;
   string name = 2;
+  string language = 5;
   optional bytes perm_nodes = 3;
   optional bytes metadata = 4;
 }
