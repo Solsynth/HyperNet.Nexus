@@ -1,12 +1,15 @@
 package server
 
 import (
+	"time"
+
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/auth"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/http/api"
 	"github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/idempotency"
+	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
@@ -44,6 +47,11 @@ func NewServer() *HTTPApp {
 	}))
 
 	app.Use(auth.ContextMiddleware)
+	app.Use(limiter.New(limiter.Config{
+		Max:               viper.GetInt("rate_limit"),
+		Expiration:        60 * time.Second,
+		LimiterMiddleware: limiter.SlidingWindow{},
+	}))
 
 	api.MapAPIs(app)
 
