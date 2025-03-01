@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"git.solsynth.dev/hypernet/nexus/pkg/internal/http/ws"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/web/ws"
 	"github.com/rs/zerolog/log"
 
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"

@@ -1,8 +1,9 @@
 package grpc
 
 import (
-	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
 	"net"
+
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
 
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
 
@@ -29,7 +30,6 @@ func NewServer() *Server {
 	}
 
 	proto.RegisterDirectoryServiceServer(server.srv, &directory.ServiceRpcServer{})
-	proto.RegisterCommandProviderServer(server.srv, &directory.CommandRpcServer{})
 	proto.RegisterDatabaseServiceServer(server.srv, server)
 	proto.RegisterStreamServiceServer(server.srv, server)
 	proto.RegisterAllocatorServiceServer(server.srv, server)

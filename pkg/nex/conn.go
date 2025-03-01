@@ -2,8 +2,9 @@ package nex
 
 import (
 	"context"
-	"google.golang.org/grpc/metadata"
 	"time"
+
+	"google.golang.org/grpc/metadata"
 
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
 	"google.golang.org/grpc"
@@ -14,9 +15,6 @@ import (
 type Conn struct {
 	Addr string
 	Info *proto.ServiceInfo
-
-	commandServer   *grpc.Server
-	commandHandlers map[string]CommandHandler
 
 	nexusConn  *grpc.ClientConn
 	clientConn map[string]*grpc.ClientConn
@@ -34,8 +32,6 @@ func NewNexusConn(addr string, info *proto.ServiceInfo) (*Conn, error) {
 	return &Conn{
 		Addr: addr,
 		Info: info,
-
-		commandHandlers: make(map[string]CommandHandler),
 
 		nexusConn:  conn,
 		clientConn: make(map[string]*grpc.ClientConn),

@@ -4,7 +4,7 @@ import (
 	pkg "git.solsynth.dev/hypernet/nexus/pkg/internal"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/auth"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
-	"git.solsynth.dev/hypernet/nexus/pkg/internal/http/ws"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/web/ws"
 	"git.solsynth.dev/hypernet/nexus/pkg/nex"
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
@@ -12,6 +12,8 @@ import (
 )
 
 func MapAPIs(app *fiber.App) {
+	app.Get("/check-ip", getClientIP)
+
 	// Some built-in public-accessible APIs
 	wellKnown := app.Group("/.well-known").Name("Well Known")
 	{
@@ -22,7 +24,6 @@ func MapAPIs(app *fiber.App) {
 				"status":    true,
 			})
 		})
-		wellKnown.Get("/check-ip", getClientIP)
 		wellKnown.Get("/directory/services", listExistsService)
 
 		wellKnown.Get("/openid-configuration", func(c *fiber.Ctx) error {
@@ -50,6 +51,5 @@ func MapAPIs(app *fiber.App) {
 	// Common websocket gateway
 	app.Get("/ws", auth.ValidatorMiddleware, websocket.New(ws.Listen))
 
-	app.All("/inv/:command", invokeCommand)
 	app.All("/cgi/:service/*", forwardService)
 }

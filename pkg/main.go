@@ -9,10 +9,10 @@ import (
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/auth"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/database"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
-	server "git.solsynth.dev/hypernet/nexus/pkg/internal/http"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/kv"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/mq"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/watchtower"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/web"
 	"git.solsynth.dev/hypernet/nexus/pkg/nex/sec"
 	"github.com/fatih/color"
 
@@ -109,7 +109,7 @@ func main() {
 	go directory.ValidateServices()
 
 	// Server
-	go server.NewServer().Listen()
+	go web.NewServer().Listen()
 
 	// Grpc Server
 	go grpc.NewServer().Listen()

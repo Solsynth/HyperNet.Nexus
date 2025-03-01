@@ -1,10 +1,10 @@
-package server
+package web
 
 import (
 	"time"
 
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/auth"
-	"git.solsynth.dev/hypernet/nexus/pkg/internal/http/api"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/web/api"
 	"github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -15,11 +15,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-type HTTPApp struct {
+type WebApp struct {
 	app *fiber.App
 }
 
-func NewServer() *HTTPApp {
+func NewServer() *WebApp {
 	app := fiber.New(fiber.Config{
 		DisableStartupMessage: true,
 		EnableIPValidation:    true,
@@ -55,10 +55,10 @@ func NewServer() *HTTPApp {
 
 	api.MapAPIs(app)
 
-	return &HTTPApp{app}
+	return &WebApp{app}
 }
 
-func (v *HTTPApp) Listen() {
+func (v *WebApp) Listen() {
 	if err := v.app.Listen(viper.GetString("bind")); err != nil {
 		log.Fatal().Err(err).Msg("An error occurred when starting server...")
 	}
