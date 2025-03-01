@@ -125,7 +125,7 @@ func CleanDb(dsn string) error {
 		return fmt.Errorf("failed to scan tables: %v", err)
 	}
 
-	deadline := time.Now().Add(-30 * 24 * time.Hour) // 30 days before
+	deadline := time.Now().Add(-7 * 24 * time.Hour) // 30 days before
 	for _, table := range tables {
 		sql := fmt.Sprintf("DELETE FROM %s WHERE deleted_at < ?", table)
 		if err := conn.Raw(sql, deadline).Error; err != nil {
