@@ -11,7 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/proxy"
 )
 
-func MapAPIs(app *fiber.App) {
+func MapControllers(app *fiber.App) {
 	app.Get("/check-ip", getClientIP)
 
 	// Some built-in public-accessible APIs

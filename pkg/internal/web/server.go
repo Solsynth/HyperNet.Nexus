@@ -6,11 +6,11 @@ import (
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/auth"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/web/api"
 	"github.com/goccy/go-json"
+	"github.com/gofiber/contrib/fiberzerolog"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/idempotency"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
-	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
@@ -32,6 +32,10 @@ func NewServer() *WebApp {
 		EnablePrintRoutes:     viper.GetBool("debug.print_routes"),
 	})
 
+	app.Use(fiberzerolog.New(fiberzerolog.Config{
+		Logger: &log.Logger,
+	}))
+
 	app.Use(idempotency.New())
 	app.Use(cors.New(cors.Config{
 		AllowCredentials: true,
@@ -41,11 +45,6 @@ func NewServer() *WebApp {
 		},
 	}))
 
-	app.Use(logger.New(logger.Config{
-		Format: "${status} | ${latency} | ${method} ${path}\n",
-		Output: log.Logger,
-	}))
-
 	app.Use(auth.ContextMiddleware)
 	app.Use(limiter.New(limiter.Config{
 		Max:               viper.GetInt("rate_limit"),
@@ -53,7 +52,7 @@ func NewServer() *WebApp {
 		LimiterMiddleware: limiter.SlidingWindow{},
 	}))
 
-	api.MapAPIs(app)
+	api.MapControllers(app)
 
 	return &WebApp{app}
 }
