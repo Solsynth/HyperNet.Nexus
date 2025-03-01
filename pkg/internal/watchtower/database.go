@@ -125,11 +125,13 @@ func CleanDb(dsn string) error {
 		return fmt.Errorf("failed to scan tables: %v", err)
 	}
 
-	deadline := time.Now().Add(-7 * 24 * time.Hour) // 30 days before
+	deadline := time.Now().Add(-7 * 24 * time.Hour) // 7 days before
 	for _, table := range tables {
 		sql := fmt.Sprintf("DELETE FROM %s WHERE deleted_at < ?", table)
-		if err := conn.Raw(sql, deadline).Error; err != nil {
+		if tx := conn.Raw(sql, deadline); tx.Error != nil {
 			log.Warn().Err(err).Str("table", table).Str("dsn", dsn).Msg("Unable to clean soft deleted records in this table...")
+		} else {
+			log.Info().Str("table", table).Str("dsn", dsn).Int64("rows", tx.RowsAffected).Msg("Cleaned soft deleted records in this table...")
 		}
 	}
 
