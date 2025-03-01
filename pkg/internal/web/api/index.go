@@ -13,19 +13,19 @@ import (
 
 func MapControllers(app *fiber.App) {
 	app.Get("/check-ip", getClientIP)
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{
+			"api_level": pkg.ApiLevel,
+			"version":   pkg.AppVersion,
+			"status":    true,
+		})
+	})
+	app.Get("/directory/status", getServicesStatus)
+	app.Get("/directory/services", listExistsService)
 
 	// Some built-in public-accessible APIs
 	wellKnown := app.Group("/.well-known").Name("Well Known")
 	{
-		wellKnown.Get("/", func(c *fiber.Ctx) error {
-			return c.JSON(fiber.Map{
-				"api_level": pkg.ApiLevel,
-				"version":   pkg.AppVersion,
-				"status":    true,
-			})
-		})
-		wellKnown.Get("/directory/services", listExistsService)
-
 		wellKnown.Get("/openid-configuration", func(c *fiber.Ctx) error {
 			service := directory.GetServiceInstanceByType(nex.ServiceTypeAuth)
 			if service == nil || service.HttpAddr == nil {
@@ -45,7 +45,7 @@ func MapControllers(app *fiber.App) {
 	// WatchTower administration APIs
 	wt := app.Group("/wt").Name("WatchTower").Use(auth.ValidatorMiddleware)
 	{
-		wt.Post("/maintenance/database", wtRunDbMaintenance)
+		wt.Post("/maintenance/database", watchRunDbMaintenance)
 	}
 
 	// Common websocket gateway

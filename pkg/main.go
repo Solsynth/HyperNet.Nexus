@@ -117,6 +117,7 @@ func main() {
 	// Configure timed tasks
 	quartz := cron.New(cron.WithLogger(cron.VerbosePrintfLogger(&log.Logger)))
 	quartz.AddFunc("@midnight", watchtower.RunDbMaintenance)
+	quartz.AddFunc("@every 5m", directory.ValidateServices)
 	quartz.Start()
 
 	// Messages

@@ -1,8 +1,34 @@
 package directory
 
-import "github.com/rs/zerolog/log"
+import (
+	"sync"
+
+	"github.com/rs/zerolog/log"
+)
+
+var statusOfServices = make(map[string]bool)
+var statusLock sync.Mutex
+
+func GetServiceStatus() map[string]bool {
+	out := make(map[string]bool)
+	for k, v := range statusOfServices {
+		out[k] = v
+	}
+
+	services := ListServiceInstance()
+	for _, service := range services {
+		if _, ok := out[service.Type]; !ok {
+			out[service.Type] = false
+		}
+	}
+
+	return out
+}
 
 func ValidateServices() {
+	statusLock.Lock()
+	defer statusLock.Unlock()
+
 	services := ListServiceInstance()
 	if len(services) == 0 {
 		return
@@ -19,9 +45,12 @@ func ValidateServices() {
 		}
 		// Directly use the connect method to skip cache
 		if _, err := ConnectService(service); err != nil {
+			statusOfServices[service.Type] = false
 			_ = RemoveServiceInstance(service.ID)
 			log.Warn().Err(err).Str("id", service.ID).Str("addr", service.GrpcAddr).Msg("Unable connect to service, dropped...")
 			continue
+		} else {
+			statusOfServices[service.Type] = true
 		}
 
 		successCount++

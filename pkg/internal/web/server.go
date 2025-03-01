@@ -23,8 +23,8 @@ func NewServer() *WebApp {
 	app := fiber.New(fiber.Config{
 		DisableStartupMessage: true,
 		EnableIPValidation:    true,
-		ServerHeader:          "Hypernet.Nexus",
-		AppName:               "Hypernet.Nexus",
+		ServerHeader:          "HyperNet.Nexus",
+		AppName:               "HyperNet.Nexus",
 		ProxyHeader:           fiber.HeaderXForwardedFor,
 		JSONEncoder:           json.Marshal,
 		JSONDecoder:           json.Unmarshal,

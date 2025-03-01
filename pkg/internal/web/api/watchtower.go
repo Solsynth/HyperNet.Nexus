@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func wtRunDbMaintenance(c *fiber.Ctx) error {
+func watchRunDbMaintenance(c *fiber.Ctx) error {
 	if err := sec.EnsureGrantedPerm(c, "AdminOperateWatchTower", true); err != nil {
 		return err
 	}
