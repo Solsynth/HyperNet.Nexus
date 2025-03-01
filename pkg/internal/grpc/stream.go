@@ -20,7 +20,7 @@ func (v *Server) CountStreamConnection(ctx context.Context, request *proto.Count
 
 func (v *Server) PushStream(ctx context.Context, request *proto.PushStreamRequest) (*proto.PushStreamResponse, error) {
 	var cnt int
-	var successes []uint64
+	var successes []string
 	var errs []error
 	if request.UserId != nil {
 		cnt, successes, errs = ws.WebsocketPush(uint(request.GetUserId()), request.GetBody())
@@ -32,7 +32,7 @@ func (v *Server) PushStream(ctx context.Context, request *proto.PushStreamReques
 
 	success := len(successes)
 	log.Debug().
-		Uint64("client_id", request.GetClientId()).
+		Str("client_id", request.GetClientId()).
 		Uint64("user_id", request.GetUserId()).
 		Int("count", cnt).
 		Int("success", success).
@@ -61,7 +61,7 @@ func (v *Server) PushStream(ctx context.Context, request *proto.PushStreamReques
 
 func (v *Server) PushStreamBatch(ctx context.Context, request *proto.PushStreamBatchRequest) (*proto.PushStreamResponse, error) {
 	var cnt int
-	var successes []uint64
+	var successes []string
 	var errs []error
 	if len(request.UserId) != 0 {
 		cnt, successes, errs = ws.WebsocketPushBatch(

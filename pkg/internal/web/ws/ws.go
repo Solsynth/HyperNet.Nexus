@@ -11,24 +11,34 @@ import (
 	"github.com/gofiber/contrib/websocket"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/samber/lo"
-	"github.com/spf13/viper"
 )
 
 func Listen(c *websocket.Conn) {
 	user, ok := c.Locals("nex_user").(*sec.UserInfo)
 	if !ok {
+		_ = c.WriteMessage(1, nex.WebSocketPackage{
+			Action:  "error",
+			Message: "unauthorized",
+		}.Marshal())
 		c.Close()
 		return
 	}
 
 	// Push connection
-	clientId := ClientRegister(*user, c)
+	var err error
+	clientId, err := ClientRegister(*user, c)
+	if err != nil {
+		_ = c.WriteMessage(1, nex.WebSocketPackage{
+			Action:  "error",
+			Message: "client with this id already connected",
+		}.Marshal())
+		c.Close()
+		return
+	}
 
 	// Event loop
 	var mt int
 	var data []byte
-	var err error
-
 	var packet nex.WebSocketPackage
 
 	for {
@@ -40,11 +50,6 @@ func Listen(c *websocket.Conn) {
 				Message: "unable to unmarshal your command, requires json request",
 			}.Marshal())
 			continue
-		}
-
-		aliasingMap := viper.GetStringMapString("services.aliases")
-		if val, ok := aliasingMap[packet.Endpoint]; ok {
-			packet.Endpoint = val
 		}
 
 		service := directory.GetServiceInstanceByType(packet.Endpoint)
