@@ -23,7 +23,7 @@ func ClientRegister(user sec.UserInfo, conn *websocket.Conn) (string, error) {
 		wsConn[user.ID] = make(map[string]*websocket.Conn)
 	}
 	var clientId string
-	if userDefinedId := conn.Query("clientId"); len(userDefinedId) > 0 {
+	if userDefinedId := conn.Query("clientId"); len(userDefinedId) > 0 && len(userDefinedId) <= 16 {
 		clientId = userDefinedId
 	} else {
 		clientId = uuid.NewString()
