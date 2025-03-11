@@ -26,6 +26,7 @@ func MapControllers(app *fiber.App) {
 	// Some built-in public-accessible APIs
 	wellKnown := app.Group("/.well-known").Name("Well Known")
 	{
+		wellKnown.Get("/webfinger", forwardWebfinger) // Forward webfinger to Interactive
 		wellKnown.Get("/openid-configuration", func(c *fiber.Ctx) error {
 			service := directory.GetServiceInstanceByType(nex.ServiceTypeAuth)
 			if service == nil || service.HttpAddr == nil {
