@@ -12,6 +12,8 @@ import (
 )
 
 func MapControllers(app *fiber.App) {
+	app.Get("/captcha", renderCaptcha)
+	app.Post("/captcha", validateCaptcha)
 	app.Get("/check-ip", getClientIP)
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{

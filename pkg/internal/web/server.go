@@ -11,6 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/idempotency"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
+	"github.com/gofiber/template/html/v2"
 	"github.com/rs/zerolog/log"
 	"github.com/samber/lo"
 	"github.com/spf13/viper"
@@ -21,6 +22,8 @@ type WebApp struct {
 }
 
 func NewServer() *WebApp {
+	engine := html.New(viper.GetString("templates_dir"), ".tmpl")
+
 	app := fiber.New(fiber.Config{
 		DisableStartupMessage: true,
 		EnableIPValidation:    true,
@@ -32,6 +35,7 @@ func NewServer() *WebApp {
 		BodyLimit:             512 * 1024 * 1024 * 1024, // 512 TiB
 		ReadBufferSize:        5 * 1024 * 1024,          // 5MB for large JWT
 		EnablePrintRoutes:     viper.GetBool("debug.print_routes"),
+		Views:                 engine,
 	})
 
 	app.Use(fiberzerolog.New(fiberzerolog.Config{

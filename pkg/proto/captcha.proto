@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package = ".;proto";
+
+package proto;
+
+service CaptchaService {
+  rpc CheckCaptcha(CheckCaptchaRequest) returns (CheckCaptchaResponse) {}
+}
+
+message CheckCaptchaRequest {
+  string token = 1;
+  string remote_ip = 2;
+}
+
+message CheckCaptchaResponse {
+  bool is_valid = 1;
+}

@@ -19,6 +19,7 @@ type Server struct {
 	proto.UnimplementedDatabaseServiceServer
 	proto.UnimplementedStreamServiceServer
 	proto.UnimplementedAllocatorServiceServer
+	proto.UnimplementedCaptchaServiceServer
 	health.UnimplementedHealthServer
 
 	srv *grpc.Server
@@ -33,6 +34,7 @@ func NewServer() *Server {
 	proto.RegisterDatabaseServiceServer(server.srv, server)
 	proto.RegisterStreamServiceServer(server.srv, server)
 	proto.RegisterAllocatorServiceServer(server.srv, server)
+	proto.RegisterCaptchaServiceServer(server.srv, server)
 	health.RegisterHealthServer(server.srv, server)
 
 	reflection.Register(server.srv)
