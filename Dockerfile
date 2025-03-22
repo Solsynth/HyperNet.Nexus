@@ -13,6 +13,7 @@ FROM golang:alpine
 RUN apk add postgresql-client
 
 COPY --from=nexus-server /dist /nexus/server
+COPY ./templates /templates
 
 EXPOSE 8444
 

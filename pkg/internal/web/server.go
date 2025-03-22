@@ -12,6 +12,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/idempotency"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/rs/zerolog/log"
+	"github.com/samber/lo"
 	"github.com/spf13/viper"
 )
 
@@ -51,6 +52,17 @@ func NewServer() *WebApp {
 		Max:               viper.GetInt("rate_limit"),
 		Expiration:        60 * time.Second,
 		LimiterMiddleware: limiter.SlidingWindow{},
+		Next: func(c *fiber.Ctx) bool {
+			return lo.Contains([]string{"GET", "HEAD", "OPTIONS", "CONNECT", "TRACE"}, c.Method())
+		},
+	}))
+	app.Use(limiter.New(limiter.Config{
+		Max:               viper.GetInt("rate_limit_advance"),
+		Expiration:        60 * time.Second,
+		LimiterMiddleware: limiter.SlidingWindow{},
+		Next: func(c *fiber.Ctx) bool {
+			return lo.Contains([]string{"POST", "PUT", "DELETE", "PATCH"}, c.Method())
+		},
 	}))
 
 	api.MapControllers(app)

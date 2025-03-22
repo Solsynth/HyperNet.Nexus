@@ -3,6 +3,7 @@ grpc_bind = "0.0.0.0:7001"
 domain = "localhost"
 
 rate_limit = 120
+rate_limit_advance = 60
 
 [debug]
 database = false
@@ -25,3 +26,8 @@ internal_private_key = "keys/internal_private_key.pem"
 
 [watchtower]
 database_backups = "./backups"
+
+[captcha]
+provider = "turnstile"
+api_key = ""
+api_secret = ""
