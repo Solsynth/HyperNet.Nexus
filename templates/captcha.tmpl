@@ -86,6 +86,7 @@
       }
 
       function onSuccess(token) {
+        window.parent.postMessage("captcha_tk=" + token, "*");
         const redirectUri = getQueryParam("redirect_uri");
         if (redirectUri) {
           window.location.href = `${redirectUri}?captcha_tk=${encodeURIComponent(token)}`;
