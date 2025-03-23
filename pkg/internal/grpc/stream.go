@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/web/ws"
-	"github.com/rs/zerolog/log"
 
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
 	"github.com/samber/lo"
@@ -31,14 +30,6 @@ func (v *Server) PushStream(ctx context.Context, request *proto.PushStreamReques
 	}
 
 	success := len(successes)
-	log.Debug().
-		Str("client_id", request.GetClientId()).
-		Uint64("user_id", request.GetUserId()).
-		Int("count", cnt).
-		Int("success", success).
-		Int("failed", len(errs)).
-		Msgf("Pushed a websocket package to client / user...")
-
 	if len(errs) > 0 {
 		// Partial fail
 		return &proto.PushStreamResponse{
@@ -79,14 +70,6 @@ func (v *Server) PushStreamBatch(ctx context.Context, request *proto.PushStreamB
 	}
 
 	success := len(successes)
-	log.Debug().
-		Any("client_id", request.GetClientId()).
-		Any("user_id", request.GetUserId()).
-		Int("count", cnt).
-		Int("success", success).
-		Int("failed", len(errs)).
-		Msgf("Pushed a websocket package to client / user...")
-
 	if len(errs) > 0 {
 		// Partial fail
 		return &proto.PushStreamResponse{
