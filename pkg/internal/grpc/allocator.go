@@ -2,6 +2,8 @@ package grpc
 
 import (
 	"context"
+
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/cache"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/kv"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/mq"
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
@@ -29,5 +31,18 @@ func (v *Server) AllocKv(ctx context.Context, request *proto.AllocKvRequest) (*p
 	return &proto.AllocKvResponse{
 		IsSuccess: true,
 		Endpoints: viper.GetStringSlice("kv.endpoints"),
+	}, nil
+}
+
+func (v *Server) AllocCache(ctx context.Context, request *proto.AllocCacheRequest) (*proto.AllocCacheResponse, error) {
+	if cache.Rdb == nil {
+		return &proto.AllocCacheResponse{IsSuccess: false}, status.Error(codes.Unavailable, "cache wasn't configured")
+	}
+
+	return &proto.AllocCacheResponse{
+		IsSuccess: true,
+		Addr:      viper.GetString("cache.addr"),
+		Password:  viper.GetString("cache.password"),
+		Db:        request.GetDb(),
 	}, nil
 }

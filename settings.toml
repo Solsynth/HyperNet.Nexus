@@ -17,10 +17,14 @@ dsn = "host=localhost user=postgres dbname=postgres password=password port=5432 
 prefix = "sn_"
 
 [mq]
-addr = "localhost:4222"
+addr = "nats.orb.local:4222"
 
 [kv]
-endpoints = ["localhost:2379"]
+endpoints = ["etcd.orb.local:2379"]
+
+[cache]
+addr = "redis.orb.local:6379"
+password = ""
 
 [security]
 public_key = "keys/public_key.pem"

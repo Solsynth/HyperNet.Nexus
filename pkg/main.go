@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/auth"
+	"git.solsynth.dev/hypernet/nexus/pkg/internal/cache"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/database"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/kv"
@@ -69,6 +70,14 @@ func main() {
 		log.Error().Err(err).Msg("An error occurred when connecting to MQ (nats). MQ related feature will be disabled.")
 	} else {
 		log.Info().Msg("Connected to MQ (nats)!")
+	}
+
+	// Connect to cache (redis)
+	log.Info().Msg("Connecting to cache (redis)...")
+	if err := cache.ConnectRedis(viper.GetString("cache.addr"), viper.GetString("cache.password"), 0); err != nil {
+		log.Error().Err(err).Msg("An error occurred when connecting to cache (redis). Cache related features will be disabled.")
+	} else {
+		log.Info().Msg("Connected to cache (redis)!")
 	}
 
 	// Connect to database
