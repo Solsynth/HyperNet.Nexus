@@ -51,7 +51,13 @@ func NewServer() *WebApp {
 		},
 	}))
 
-	app.Use(auth.ContextMiddleware)
+	app.Use(func(c *fiber.Ctx) error {
+		if lo.Contains(ipBlocklist, c.IP()) {
+			return fiber.NewError(fiber.StatusForbidden, "your ip has been listed in the blacklist")
+		}
+		return c.Next()
+	})
+
 	app.Use(limiter.New(limiter.Config{
 		Max:               viper.GetInt("rate_limit"),
 		Expiration:        60 * time.Second,
@@ -68,6 +74,8 @@ func NewServer() *WebApp {
 			return lo.Contains([]string{"POST", "PUT", "DELETE", "PATCH"}, c.Method())
 		},
 	}))
+
+	app.Use(auth.ContextMiddleware)
 
 	api.MapControllers(app)
 

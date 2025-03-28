@@ -50,6 +50,8 @@ func main() {
 	// Load settings
 	if err := viper.ReadInConfig(); err != nil {
 		log.Panic().Err(err).Msg("An error occurred when loading settings.")
+	} else if err := web.ParseBlockIPList(viper.GetString("ip_block_path")); err != nil {
+		log.Error().Err(err).Msg("An error occurred when parsing block IP list.")
 	}
 
 	// Connect to kv (etcd)

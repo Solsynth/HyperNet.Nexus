@@ -3,6 +3,7 @@ grpc_bind = "0.0.0.0:7001"
 domain = "localhost"
 
 templates_dir = "./templates"
+ip_block_path = "./ip_block.list"
 
 rate_limit = 120
 rate_limit_advance = 60
