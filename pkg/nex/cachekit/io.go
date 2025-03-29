@@ -13,7 +13,7 @@ import (
 // Provide a advanced tagging experience
 // At the same time, the advanced cache using client side marshaling to handle the advance data types
 
-func Set[T any](c *CaConn, key string, value T, ttl time.Duration, tags ...string) error {
+func Set[T any](c *Conn, key string, value T, ttl time.Duration, tags ...string) error {
 	raw, err := json.Marshal(value)
 	if err != nil {
 		return fmt.Errorf("unable to marshal value during caching: %v", err)
@@ -27,7 +27,7 @@ func Set[T any](c *CaConn, key string, value T, ttl time.Duration, tags ...strin
 
 // SetKA stands for Set Keep Alive
 // Don't set a TTL for the value set via this function
-func SetKA[T any](c *CaConn, key string, value T, tags ...string) error {
+func SetKA[T any](c *Conn, key string, value T, tags ...string) error {
 	raw, err := json.Marshal(value)
 	if err != nil {
 		return fmt.Errorf("unable to marshal value during caching: %v", err)
@@ -39,7 +39,7 @@ func SetKA[T any](c *CaConn, key string, value T, tags ...string) error {
 	return cm.Set(ctx, key, string(raw), store.WithTags(tags))
 }
 
-func Get[T any](c *CaConn, key string) (T, error) {
+func Get[T any](c *Conn, key string) (T, error) {
 	var out T
 
 	ctx, cancel := c.withTimeout()
@@ -57,14 +57,14 @@ func Get[T any](c *CaConn, key string) (T, error) {
 	return out, nil
 }
 
-func Delete(c *CaConn, key string) error {
+func Delete(c *Conn, key string) error {
 	ctx, cancel := c.withTimeout()
 	defer cancel()
 	cm := cache.New[[]byte](c.GoCache())
 	return cm.Delete(ctx, key)
 }
 
-func DeleteByTags(c *CaConn, tags ...string) error {
+func DeleteByTags(c *Conn, tags ...string) error {
 	if len(tags) == 0 {
 		return nil
 	}

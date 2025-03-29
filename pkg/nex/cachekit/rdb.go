@@ -9,14 +9,14 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type CaConn struct {
+type Conn struct {
 	n       *nex.Conn
 	Rd      *redis.Client
 	Timeout time.Duration
 }
 
-func NewCaConn(conn *nex.Conn, timeout time.Duration) (*CaConn, error) {
-	c := &CaConn{
+func NewCaConn(conn *nex.Conn, timeout time.Duration) (*Conn, error) {
+	c := &Conn{
 		n:       conn,
 		Timeout: timeout,
 	}
@@ -33,6 +33,6 @@ func NewCaConn(conn *nex.Conn, timeout time.Duration) (*CaConn, error) {
 	return c, nil
 }
 
-func (c *CaConn) withTimeout() (context.Context, context.CancelFunc) {
+func (c *Conn) withTimeout() (context.Context, context.CancelFunc) {
 	return context.WithTimeout(context.Background(), c.Timeout)
 }

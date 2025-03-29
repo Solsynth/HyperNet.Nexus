@@ -5,28 +5,28 @@ import "time"
 // The functions below are directly using the redis connection to operaete the redis
 
 // Set stores a key-value pair in Redis with an optional expiration time
-func (c *CaConn) RSet(key string, value any, ttl time.Duration) error {
+func (c *Conn) RSet(key string, value any, ttl time.Duration) error {
 	ctx, cancel := c.withTimeout()
 	defer cancel()
 	return c.Rd.Set(ctx, key, value, ttl).Err()
 }
 
 // Get retrieves a value from Redis by key
-func (c *CaConn) RGet(key string) (string, error) {
+func (c *Conn) RGet(key string) (string, error) {
 	ctx, cancel := c.withTimeout()
 	defer cancel()
 	return c.Rd.Get(ctx, key).Result()
 }
 
 // Delete removes a key from Redis
-func (c *CaConn) RDelete(key string) error {
+func (c *Conn) RDelete(key string) error {
 	ctx, cancel := c.withTimeout()
 	defer cancel()
 	return c.Rd.Del(ctx, key).Err()
 }
 
 // Exists checks if a key exists in Redis
-func (c *CaConn) RExists(key string) (bool, error) {
+func (c *Conn) RExists(key string) (bool, error) {
 	ctx, cancel := c.withTimeout()
 	defer cancel()
 	exists, err := c.Rd.Exists(ctx, key).Result()
@@ -37,7 +37,7 @@ func (c *CaConn) RExists(key string) (bool, error) {
 }
 
 // ClearCacheByPrefix deletes all keys matching a given prefix
-func (c *CaConn) RDeleteByPrefix(prefix string) error {
+func (c *Conn) RDeleteByPrefix(prefix string) error {
 	ctx, cancel := c.withTimeout()
 	defer cancel()
 
