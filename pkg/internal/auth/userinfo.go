@@ -6,10 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"git.solsynth.dev/hypernet/nexus/pkg/internal/cache"
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/directory"
 	"git.solsynth.dev/hypernet/nexus/pkg/nex"
-	"git.solsynth.dev/hypernet/nexus/pkg/nex/cachekit"
 	"git.solsynth.dev/hypernet/nexus/pkg/nex/sec"
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
 	"github.com/gofiber/fiber/v2"
@@ -20,19 +18,6 @@ func userinfoFetch(c *fiber.Ctx) error {
 	claims, ok := c.Locals("nex_principal").(*sec.JwtClaims)
 	if !ok {
 		return fiber.NewError(fiber.StatusUnauthorized, "user principal data was not found")
-	}
-
-	if val, err := cachekit.Get[sec.UserInfo](
-		cache.Kcc,
-		cachekit.FKey(cachekit.DAUserInfoPrefix, claims.Session),
-	); err == nil {
-		c.Locals("nex_user", &val)
-		tk, err := IWriter.WriteUserInfoJwt(val)
-		if err != nil {
-			return fiber.NewError(fiber.StatusInternalServerError, fmt.Sprintf("unable to sign userinfo: %v", err))
-		}
-		c.Locals("nex_token", tk)
-		return nil
 	}
 
 	service := directory.GetServiceInstanceByType(nex.ServiceTypeAuth)
