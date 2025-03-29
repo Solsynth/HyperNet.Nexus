@@ -1,8 +1,16 @@
 package cache
 
-import "github.com/redis/go-redis/v9"
+import (
+	"time"
 
-var Rdb *redis.Client
+	"git.solsynth.dev/hypernet/nexus/pkg/nex/cachekit"
+	"github.com/redis/go-redis/v9"
+)
+
+var (
+	Rdb *redis.Client
+	Kcc *cachekit.Conn
+)
 
 func ConnectRedis(addr, password string, db int) error {
 	Rdb = redis.NewClient(&redis.Options{
@@ -10,5 +18,9 @@ func ConnectRedis(addr, password string, db int) error {
 		Password: password,
 		DB:       db,
 	})
+	Kcc = &cachekit.Conn{
+		Rd:      Rdb,
+		Timeout: 3 * time.Second,
+	}
 	return nil
 }
