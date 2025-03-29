@@ -6,8 +6,10 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var statusOfServices = make(map[string]bool)
-var statusLock sync.Mutex
+var (
+	statusOfServices = make(map[string]bool)
+	statusLock       sync.Mutex
+)
 
 func GetServiceStatus() map[string]bool {
 	out := make(map[string]bool)
@@ -23,6 +25,12 @@ func GetServiceStatus() map[string]bool {
 	}
 
 	return out
+}
+
+func SetServiceStatus(t string, status bool) {
+	statusLock.Lock()
+	defer statusLock.Unlock()
+	statusOfServices[t] = status
 }
 
 func ValidateServices() {

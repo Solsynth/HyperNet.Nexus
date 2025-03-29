@@ -2,14 +2,15 @@ package directory
 
 import (
 	"context"
+	"math/rand"
+	"time"
+
 	"git.solsynth.dev/hypernet/nexus/pkg/internal/kv"
 	"git.solsynth.dev/hypernet/nexus/pkg/nex"
 	"git.solsynth.dev/hypernet/nexus/pkg/proto"
 	"github.com/goccy/go-json"
 	"github.com/rs/zerolog/log"
 	clientv3 "go.etcd.io/etcd/client/v3"
-	"math/rand"
-	"time"
 )
 
 const ServiceInfoKvPrefix = "nexus.service/"
@@ -22,6 +23,7 @@ func AddServiceInstance(in *ServiceInstance) error {
 	}
 
 	_, err = kv.Kv.Put(context.Background(), key, string(data))
+	SetServiceStatus(in.Type, true)
 	return err
 }
 
