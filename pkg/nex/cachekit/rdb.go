@@ -15,7 +15,7 @@ import (
 // And able to recreate the conn with different options
 var (
 	rdc *redis.Client
-	rdl *sync.Mutex
+	rdl sync.Mutex
 )
 
 type Conn struct {
