@@ -33,7 +33,9 @@ func (v *Conn) AllocResource(t AllocatableResourceType) any {
 		return resp.Endpoints
 	case AllocatableResourceCache:
 		conn := v.GetNexusGrpcConn()
-		resp, err := proto.NewAllocatorServiceClient(conn).AllocCache(context.Background(), &proto.AllocCacheRequest{})
+		resp, err := proto.NewAllocatorServiceClient(conn).AllocCache(context.Background(), &proto.AllocCacheRequest{
+			Db: 0,
+		})
 		if err != nil || !resp.IsSuccess {
 			return nil
 		}
