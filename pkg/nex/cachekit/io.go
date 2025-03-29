@@ -21,8 +21,8 @@ func Set[T any](c *CaConn, key string, value T, ttl time.Duration, tags ...strin
 
 	ctx, cancel := c.withTimeout()
 	defer cancel()
-	cm := cache.New[[]byte](c.GoCache())
-	return cm.Set(ctx, key, raw, store.WithTags(tags), store.WithExpiration(ttl))
+	cm := cache.New[string](c.GoCache())
+	return cm.Set(ctx, key, string(raw), store.WithTags(tags), store.WithExpiration(ttl))
 }
 
 // SetKA stands for Set Keep Alive
@@ -35,8 +35,8 @@ func SetKA[T any](c *CaConn, key string, value T, tags ...string) error {
 
 	ctx, cancel := c.withTimeout()
 	defer cancel()
-	cm := cache.New[[]byte](c.GoCache())
-	return cm.Set(ctx, key, raw, store.WithTags(tags))
+	cm := cache.New[string](c.GoCache())
+	return cm.Set(ctx, key, string(raw), store.WithTags(tags))
 }
 
 func Get[T any](c *CaConn, key string) (T, error) {
@@ -44,13 +44,13 @@ func Get[T any](c *CaConn, key string) (T, error) {
 
 	ctx, cancel := c.withTimeout()
 	defer cancel()
-	cm := cache.New[[]byte](c.GoCache())
+	cm := cache.New[string](c.GoCache())
 	raw, err := cm.Get(ctx, key)
 	if err != nil {
 		return out, err
 	}
 
-	if err := json.Unmarshal(raw, &out); err != nil {
+	if err := json.Unmarshal([]byte(raw), &out); err != nil {
 		return out, fmt.Errorf("unable to unmarshal value during caching: %v", err)
 	}
 
