@@ -7,6 +7,7 @@ import "fmt"
 const (
 	DAAttachment = "attachment"
 	DAUser       = "account"
+	DARealm      = "realm"
 )
 
 func FKey(prefix string, key any) string {
