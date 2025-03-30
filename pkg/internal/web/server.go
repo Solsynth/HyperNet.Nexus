@@ -63,7 +63,7 @@ func NewServer() *WebApp {
 		Expiration:        60 * time.Second,
 		LimiterMiddleware: limiter.SlidingWindow{},
 		Next: func(c *fiber.Ctx) bool {
-			return lo.Contains([]string{"GET", "HEAD", "OPTIONS", "CONNECT", "TRACE"}, c.Method())
+			return lo.Contains([]string{"POST", "PUT", "DELETE", "PATCH"}, c.Method())
 		},
 	}))
 	app.Use(limiter.New(limiter.Config{
@@ -71,7 +71,7 @@ func NewServer() *WebApp {
 		Expiration:        60 * time.Second,
 		LimiterMiddleware: limiter.SlidingWindow{},
 		Next: func(c *fiber.Ctx) bool {
-			return lo.Contains([]string{"POST", "PUT", "DELETE", "PATCH"}, c.Method())
+			return lo.Contains([]string{"GET", "HEAD", "OPTIONS", "CONNECT", "TRACE"}, c.Method())
 		},
 	}))
 
