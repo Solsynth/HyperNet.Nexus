@@ -3,4 +3,5 @@
 /default.etcd
 /keys
 
+.idea
 .DS_Store

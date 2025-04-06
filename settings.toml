@@ -2,6 +2,8 @@ bind = "0.0.0.0:8001"
 grpc_bind = "0.0.0.0:7001"
 domain = "localhost"
 
+resources_endpoint = "https://api.sn.solsynth.dev/cgi/uc"
+
 templates_dir = "./templates"
 ip_block_path = "./ip_block.list"
 

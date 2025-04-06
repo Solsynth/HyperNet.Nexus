@@ -12,6 +12,7 @@ import (
 )
 
 func MapControllers(app *fiber.App) {
+	app.Get("/meet", renderMeetRoom)
 	app.Get("/captcha", renderCaptcha)
 	app.Post("/captcha", validateCaptcha)
 	app.Get("/check-ip", getClientIP)
